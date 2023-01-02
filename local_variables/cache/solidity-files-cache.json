@@ -1,0 +1,40 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/local_variables/contracts/local_variables.sol": {
+      "lastModificationDate": 1672620374919,
+      "contentHash": "26e67755ca122cb53319423d6016b103",
+      "sourceName": "contracts/local_variables.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LocalVariables"
+      ]
+    }
+  }
+}
