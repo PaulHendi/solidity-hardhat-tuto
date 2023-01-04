@@ -7,9 +7,12 @@ Any data assigned to a local variable will be lost after the function finishes e
 
 Here is an example
 
+
+```
 contract MyContract {
     function func() external {
         uint localVar = 123;
         // localVar is not saved to blockchain.
     }
 }
+```
