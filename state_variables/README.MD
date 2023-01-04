@@ -7,6 +7,7 @@ State variables are stored on the blockchain. So you can save some data into a s
 How do you declare a state variable?
 State variables are declared inside contract, outside functions. Here is an example
 
+```
 contract MyContract {
     // this is a state variable
     uint public myStateVariable;
@@ -16,3 +17,5 @@ contract MyContract {
         uint notStateVariable = 123;
     }
 }
+```
+
