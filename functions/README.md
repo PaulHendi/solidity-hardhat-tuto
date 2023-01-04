@@ -1,8 +1,11 @@
 Here is an example of a function.
 
+
+```
 function add(uint x, uint y) external pure returns (uint) {
     return x + y;
 }
+```
 
 This function returns the sum of two numbers x and y.
 
