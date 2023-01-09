@@ -1,0 +1,10 @@
+Complete the Counter contract.
+
+This contract must
+
+store an uint state variable named count.
+
+have functions to increment and decrement count.
+
+How do I get the value of count?
+You won't need to implement a getter function for count. Solidity automatically creates an external view function for the state variable count.
