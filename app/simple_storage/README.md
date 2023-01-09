@@ -1,0 +1,1 @@
+Complete SimpleStorage, a contract that stores a single state variable named text of type string.
