@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Tutos/inheritance/inheritance_override/contracts/inheritance_override.sol": {
+      "lastModificationDate": 1673468900104,
+      "contentHash": "cd05c91bfe98d23a65982fb754f62d6a",
+      "sourceName": "contracts/inheritance_override.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "A",
+        "B"
+      ]
+    }
+  }
+}
