@@ -1,0 +1,16 @@
+{
+  "name": "enum",
+  "version": "1.0.0",
+  "description": "Solidity supports enumerables and they are useful to model choice and to keep track of state.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.12.5"
+  }
+}

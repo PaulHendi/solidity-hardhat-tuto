@@ -1,0 +1,1 @@
+Solidity supports enumerables and they are useful to model choice and to keep track of state.
