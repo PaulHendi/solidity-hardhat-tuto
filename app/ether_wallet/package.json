@@ -1,0 +1,16 @@
+{
+  "name": "ether_wallet",
+  "version": "1.0.0",
+  "description": "Create a contract that can receive Ether from anyone. Only the owner can withdraw.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
