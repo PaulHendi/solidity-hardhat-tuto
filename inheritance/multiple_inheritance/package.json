@@ -1,0 +1,16 @@
+{
+  "name": "multiple_inheritance",
+  "version": "1.0.0",
+  "description": "Solidity supports multiple inheritance. Order of inheritance is important. You must list the parent contracts in the order from “most base-like” to “most derived”.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}

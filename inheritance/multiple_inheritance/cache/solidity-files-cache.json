@@ -1,0 +1,42 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Tutos/inheritance/multiple_inheritance/contracts/multiple_inheritance.sol": {
+      "lastModificationDate": 1674080999085,
+      "contentHash": "2a41b8ba248d3ae75723c59787ea7aa4",
+      "sourceName": "contracts/multiple_inheritance.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "X",
+        "Y",
+        "Z"
+      ]
+    }
+  }
+}

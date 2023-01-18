@@ -1,0 +1,1 @@
+Solidity supports multiple inheritance. Order of inheritance is important. You must list the parent contracts in the order from “most base-like” to “most derived”.
