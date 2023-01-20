@@ -1,0 +1,16 @@
+{
+  "name": "delegate_call",
+  "version": "1.0.0",
+  "description": "delegatecall is like call, except the code of callee is executed inside the caller.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
