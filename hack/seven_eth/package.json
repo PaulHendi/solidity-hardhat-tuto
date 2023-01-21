@@ -1,0 +1,19 @@
+{
+  "name": "seven_eth",
+  "version": "1.0.0",
+  "description": "Become the 7th person to deposit 1 ETH to win 7 ETH.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
