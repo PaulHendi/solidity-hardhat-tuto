@@ -1,0 +1,18 @@
+{
+  "name": "multi_call",
+  "version": "1.0.0",
+  "description": "MultiCall is a handy contract that queries multiple contracts in a single function call and returns all the results.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.12.6"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1"
+  }
+}

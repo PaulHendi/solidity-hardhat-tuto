@@ -1,0 +1,75 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/contracts call/multi_call/contracts/multi_call.sol": {
+      "lastModificationDate": 1674307454975,
+      "contentHash": "37a111e2237b38fa84bd5b608a4ce827",
+      "sourceName": "contracts/multi_call.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "MultiCall"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/contracts call/multi_call/contracts/test_multi_call.sol": {
+      "lastModificationDate": 1674307454976,
+      "contentHash": "0d9bcdd6810506a57a84e5e91a95f36b",
+      "sourceName": "contracts/test_multi_call.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TestMultiCall"
+      ]
+    }
+  }
+}
