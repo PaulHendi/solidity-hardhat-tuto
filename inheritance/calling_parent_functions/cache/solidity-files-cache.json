@@ -1,0 +1,43 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Tutos/inheritance/calling_parent_functions/contracts/calling_parent_functions.sol": {
+      "lastModificationDate": 1673475658380,
+      "contentHash": "48cd9b3bcd65bbeb0a2e55082e568af2",
+      "sourceName": "contracts/calling_parent_functions.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "E",
+        "F",
+        "G",
+        "H"
+      ]
+    }
+  }
+}
