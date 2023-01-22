@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/contracts call/multi_delegate_call/contracts/multi_delegate_call.sol": {
+      "lastModificationDate": 1674396065829,
+      "contentHash": "fe2c04d6d8c59e8e5ba4c270fd006422",
+      "sourceName": "contracts/multi_delegate_call.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "MultiDelegatecall",
+        "TestMultiDelegatecall"
+      ]
+    }
+  }
+}
