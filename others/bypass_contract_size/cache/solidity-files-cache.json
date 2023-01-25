@@ -1,0 +1,111 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/others/bypass_contract_size/contracts/bypass_contract_size.sol": {
+      "lastModificationDate": 1674645269662,
+      "contentHash": "7d5a1c3f5cb71805ace1be6a7c43cbab",
+      "sourceName": "contracts/bypass_contract_size.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NoContractExploit",
+        "Zero"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/others/bypass_contract_size/contracts/classic_contract.sol": {
+      "lastModificationDate": 1674645740812,
+      "contentHash": "f919680484a9a48ffb5fdbc83d55d122",
+      "sourceName": "contracts/classic_contract.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "ClassicContract"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/others/bypass_contract_size/contracts/no_contract.sol": {
+      "lastModificationDate": 1674645269662,
+      "contentHash": "5db1308f1c10a1230ca42fc328d39c5a",
+      "sourceName": "contracts/no_contract.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NoContract"
+      ]
+    }
+  }
+}
