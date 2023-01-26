@@ -1,0 +1,19 @@
+{
+  "name": "erc20_flash_loan",
+  "version": "1.0.0",
+  "description": "One of my favorite exploit. Based on the fact that the lending pool contract can call any function on behalf of the sender, we ask the contract to approve the sender the whole token balance of the contract.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
