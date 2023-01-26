@@ -1,0 +1,21 @@
+{
+  "name": "eth_flash_loan",
+  "version": "1.0.0",
+  "description": "The contract has 10 ETH. The exploit is based on the fact that the require checks if the balance of is smart contract is okay after the flash loan. So the sender simply deposit the whole balance loaned to the SC. Hence the require is okay, but in the storage the balance of the sender is actually the whole balance of the SC, he can then withdraw.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hardhat": "^2.12.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1"
+  }
+}
