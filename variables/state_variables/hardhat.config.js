@@ -1,7 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-
-const API_INFURA = "YOUR API KEY"
-const PRIVATE_KEY = "YOUR PRIVATE KEY";
+require('dotenv').config();
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -10,8 +8,12 @@ module.exports = {
 
   networks: {
   	goerli: {
-		url : 	"https://goerli.infura.io/v3/{API_INFURA}",
-		accounts : [PRIVATE_KEY]
+		url : 	"https://goerli.infura.io/v3/"+ process.env.API_INFURA,
+		accounts : [process.env.PRIVATE_KEY]
+	},
+	mumbai: {
+		url : "https://polygon-mumbai.infura.io/v3/"+ process.env.API_INFURA,
+		accounts : [process.env.PRIVATE_KEY]
 	}
   }
 };

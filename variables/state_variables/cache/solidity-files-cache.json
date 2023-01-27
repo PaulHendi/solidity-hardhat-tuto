@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/pilu/Desktop/solidity_hardhat_tuto/state_variables/contracts/state_variables.sol": {
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/variables/state_variables/contracts/state_variables.sol": {
       "lastModificationDate": 1672532208145,
       "contentHash": "24fa7254b48db4b62941a1c97002432d",
       "sourceName": "contracts/state_variables.sol",
