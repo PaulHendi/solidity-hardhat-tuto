@@ -1,0 +1,75 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/function_selector_clash/contracts/function_selector_clash.sol": {
+      "lastModificationDate": 1674720044220,
+      "contentHash": "f523a072a911fe59c8ce4ca465510ad2",
+      "sourceName": "contracts/function_selector_clash.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "FunctionSelectorClash"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/function_selector_clash/contracts/function_selector_clash_exploit.sol": {
+      "lastModificationDate": 1674769326842,
+      "contentHash": "5f76e415b7dae97727b0b4dffcbed9c0",
+      "sourceName": "contracts/function_selector_clash_exploit.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "FunctionSelectorClashExploit"
+      ]
+    }
+  }
+}
