@@ -1,0 +1,19 @@
+{
+  "name": "randomness",
+  "version": "1.0.0",
+  "description": "At first glance, it seems impossible to guess the correct number. But let's see how easy it is win.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
