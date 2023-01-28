@@ -1,0 +1,76 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/signature_replay_attack/contracts/signature_replay.sol": {
+      "lastModificationDate": 1674858429927,
+      "contentHash": "e59cc72af68dfe572c8d4c66dcb54925",
+      "sourceName": "contracts/signature_replay.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "SignatureReplay"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/signature_replay_attack/contracts/signature_replay_attack.sol": {
+      "lastModificationDate": 1674858429927,
+      "contentHash": "eae322e8fef94049fb46fab625ba2d65",
+      "sourceName": "contracts/signature_replay_attack.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "ISignatureReplay",
+        "SignatureReplayExploit"
+      ]
+    }
+  }
+}
