@@ -1,0 +1,110 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/wallet_hijack/contracts/upgradable_wallet.sol": {
+      "lastModificationDate": 1674991830440,
+      "contentHash": "7f40ae52759a10b1d9f9f602a2325424",
+      "sourceName": "contracts/upgradable_wallet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "UpgradableWallet"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/wallet_hijack/contracts/wallet.sol": {
+      "lastModificationDate": 1674991813267,
+      "contentHash": "b69e19c3538691d38f72ffe1cc4dfbf6",
+      "sourceName": "contracts/wallet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "WalletImplementation"
+      ]
+    },
+    "/Users/pilu/Desktop/hardhat-tutorial/Hack/wallet_hijack/contracts/wallet_hijack.sol": {
+      "lastModificationDate": 1674991395958,
+      "contentHash": "02599a73408c6d7d95ab924b40bfbfe8",
+      "sourceName": "contracts/wallet_hijack.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "UpgradableWalletExploit"
+      ]
+    }
+  }
+}
