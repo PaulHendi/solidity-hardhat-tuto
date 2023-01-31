@@ -14,6 +14,14 @@ module.exports = {
 	mumbai: {
 		url : "https://polygon-mumbai.infura.io/v3/"+ process.env.API_INFURA,
 		accounts : [process.env.PRIVATE_KEY]
+	},
+	fantom: {
+		url: "https://rpc.ankr.com/fantom",
+		accounts: [process.env.PRIVATE_KEY]
+	},
+	fantom_testnet: {
+		url: "https://rpc.testnet.fantom.network/",
+		accounts: [process.env.PRIVATE_KEY]
 	}
   }
 };
