@@ -11,7 +11,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY]
     },
     fantom_testnet: {
-      url: "https://rpc.testnet.fantom.network",
+      url: "https://rpc.ankr.com/fantom_testnet",
       accounts: [process.env.PRIVATE_KEY]
     }
   }
