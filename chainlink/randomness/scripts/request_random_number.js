@@ -9,7 +9,6 @@ async function main() {
 
     // Call the contract's getNumber function
     await randomness.getRandomNumber();
-    
 
     }
 
