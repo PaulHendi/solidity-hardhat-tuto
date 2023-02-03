@@ -1,0 +1,19 @@
+{
+  "name": "uniswap_v2_add_liquidity.sol",
+  "version": "1.0.0",
+  "description": "Deposit your tokens into an Uniswap V2 pool to earn trading fees.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
