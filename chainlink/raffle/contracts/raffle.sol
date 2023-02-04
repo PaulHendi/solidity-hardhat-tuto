@@ -1,83 +1,73 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-
-import "../node_modules/@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import {randomness_interface} from "./interfaces/randomness_interface.sol";
 import {governance_interface} from "./interfaces/governance_interface.sol";
 
-contract Lottery is ChainlinkClient {
+contract Lottery  {
     enum LOTTERY_STATE { OPEN, CLOSED, CALCULATING_WINNER }
-    LOTTERY_STATE public lottery_state;
-    uint256 public lotteryId;
-    address payable[] public players;
     governance_interface public governance;
-    // .01 FTM
-    uint256 public MINIMUM = 1000000000000000;
-    // 0.1 LINK
-    uint256 public ORACLE_PAYMENT = 0.0005 * 10 ** 18; // 0.0005 LINK
-    // Alarm stuff
-    address CHAINLINK_ALARM_ORACLE = 0xc99B3D447826532722E41bc36e644ba3479E4365;
-    bytes32 CHAINLINK_ALARM_JOB_ID = "2ebb1c1a4b1e4229adac24ee0b5f784f";
-    using Chainlink for Chainlink.Request;
+
+    struct lottery {
+        LOTTERY_STATE lottery_state;
+        governance_interface governance;
+        uint256 minimum;
+        address payable[] players;
+    }
+
+    mapping(uint256 => lottery) public lotteries;
+    uint256 public lotteryId;
+
+    modifier onlyGovernance() {
+        require(msg.sender == address(governance), "Only governance can call this function.");
+        _;
+    }
+
     
     constructor(address _governance)
     {
-        setPublicChainlinkToken();
-        lotteryId = 1;
-        lottery_state = LOTTERY_STATE.CLOSED;
+        lotteryId = 0;
+        lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
         governance = governance_interface(_governance);
     }
 
     function enter() public payable {
-        assert(msg.value == MINIMUM);
-        assert(lottery_state == LOTTERY_STATE.OPEN);
-        players.push(payable(msg.sender));
+        require(msg.value >= lotteries[lotteryId].minimum, "Not enough FTM sent");
+        assert(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN);
+        lotteries[lotteryId].players.push(payable(msg.sender));
     } 
     
-  function start_new_lottery(uint256 duration) public {
-    require(lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
-    lottery_state = LOTTERY_STATE.OPEN;
-    Chainlink.Request memory req = buildChainlinkRequest(CHAINLINK_ALARM_JOB_ID, address(this), this.fulfill_alarm.selector);
-    req.addUint("until", block.timestamp + duration);
-    sendChainlinkRequestTo(CHAINLINK_ALARM_ORACLE, req, ORACLE_PAYMENT);
-  }
+    function start_new_lottery() public {
+        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
+        lotteries[lotteryId].lottery_state = LOTTERY_STATE.OPEN;
+    }
   
-  function fulfill_alarm(bytes32 _requestId)
-    public
-    recordChainlinkFulfillment(_requestId)
-      {
-        require(lottery_state == LOTTERY_STATE.OPEN, "The lottery hasn't even started!");
-        // add a require here so that only the oracle contract can
-        // call the fulfill alarm method
-        lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
+    function end_lottery() public onlyGovernance
+    {
+        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN, "The lottery hasn't even started!");
+        lotteries[lotteryId].lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
         lotteryId = lotteryId + 1;
         pickWinner();
     }
 
 
     function pickWinner() private {
-        require(lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
+        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         randomness_interface(governance.randomness()).getRandom(lotteryId);
         //this kicks off the request and returns through fulfill_random
     }
     
     function fulfill_random(uint256 randomness) external {
-        require(lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
+        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         require(randomness > 0, "random-not-found");
         // assert(msg.sender == governance.randomness());
-        uint256 index = randomness % players.length;
-        players[index].transfer(address(this).balance);
-        players = new address payable[](0);
-        lottery_state = LOTTERY_STATE.CLOSED;
-        // You could have this run forever
-        // start_new_lottery();
-        // or with a cron job from a chainlink node would allow you to 
-        // keep calling "start_new_lottery" as well
+        uint256 index = randomness % lotteries[lotteryId].players.length;
+        lotteries[lotteryId].players[index].transfer(address(this).balance);
+        lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
     }
 
     function get_players() public view returns (address payable[] memory) {
-        return players;
+        return lotteries[lotteryId].players;
     }
     
     function get_pot() public view returns(uint256){
