@@ -3,15 +3,15 @@ pragma solidity 0.8.17;
 
 import "../node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import {lottery_interface} from "./interfaces/lottery_interface.sol";
-import {governance_interface} from "./interfaces/governance_interface.sol";
 
 contract RandomNumberConsumer is VRFConsumerBase {
     
+    lottery_interface public lottery_contract;
+
     bytes32 internal keyHash;
     uint256 internal fee;
     mapping (uint => uint) public randomNumber;
     mapping (bytes32 => uint) public requestIds;
-    governance_interface public governance;
     uint256 public most_recent_random;
     
     /**
@@ -22,7 +22,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
      * LINK token address:                0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F
      * Key Hash: 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4
      */
-    constructor(address _governance) 
+    constructor() 
         VRFConsumerBase(
             0xbd13f08b8352A3635218ab9418E340c60d6Eb418, // VRF Coordinator
             0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F  // LINK Token
@@ -30,7 +30,6 @@ contract RandomNumberConsumer is VRFConsumerBase {
     {
         keyHash = 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4;
         fee = 0.0005 * 10 ** 18; // 0.0005 LINK
-        governance = governance_interface(_governance);
     }
 
     /** 
@@ -50,7 +49,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
         most_recent_random = randomness;
         uint lotteryId = requestIds[requestId];
         randomNumber[lotteryId] = randomness;
-        lottery_interface(governance.lottery()).fulfill_random(randomness);
+        lottery_contract.fulfill_random(randomness);
     }
 
 }

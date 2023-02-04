@@ -2,15 +2,15 @@
 pragma solidity ^0.8.9;
 
 import {randomness_interface} from "./interfaces/randomness_interface.sol";
-import {governance_interface} from "./interfaces/governance_interface.sol";
 
 contract Lottery  {
     enum LOTTERY_STATE { OPEN, CLOSED, CALCULATING_WINNER }
-    governance_interface public governance;
+    address public owner;
+
+    randomness_interface public randomness_contract;
 
     struct lottery {
         LOTTERY_STATE lottery_state;
-        governance_interface governance;
         uint256 minimum;
         address payable[] players;
     }
@@ -18,32 +18,32 @@ contract Lottery  {
     mapping(uint256 => lottery) public lotteries;
     uint256 public lotteryId;
 
-    modifier onlyGovernance() {
-        require(msg.sender == address(governance), "Only governance can call this function.");
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function.");
         _;
     }
 
     
-    constructor(address _governance)
+    constructor()
     {
         lotteryId = 0;
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
-        governance = governance_interface(_governance);
+    }
+
+    
+    function start_new_lottery() public onlyOwner{
+        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
+        lotteries[lotteryId].lottery_state = LOTTERY_STATE.OPEN;
     }
 
     function enter() public payable {
         require(msg.value >= lotteries[lotteryId].minimum, "Not enough FTM sent");
         assert(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN);
         lotteries[lotteryId].players.push(payable(msg.sender));
-    } 
-    
-    function start_new_lottery() public {
-        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
-        lotteries[lotteryId].lottery_state = LOTTERY_STATE.OPEN;
-    }
+    }     
   
-    function end_lottery() public onlyGovernance
-    {
+    function end_lottery() public onlyOwner{
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN, "The lottery hasn't even started!");
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
         lotteryId = lotteryId + 1;
@@ -53,7 +53,7 @@ contract Lottery  {
 
     function pickWinner() private {
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
-        randomness_interface(governance.randomness()).getRandom(lotteryId);
+        randomness_contract.getRandom(lotteryId);
         //this kicks off the request and returns through fulfill_random
     }
     
