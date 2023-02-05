@@ -42,7 +42,7 @@ describe("Lottery", function () {
 
 
         // Owner ends the lottery
-        await lottery_deployed.end_lottery({gasLimit: 1000000});
+        await lottery_deployed.end_lottery({gasLimit: 2500000});  // Max gas limit : 2,500,000 (from the docs)
         
 
     });
