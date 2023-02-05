@@ -2,17 +2,30 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
-import {lottery_interface} from "./interfaces/lottery_interface.sol";
+import "./lottery.sol";
 
 contract RandomNumberConsumer is VRFConsumerBase {
     
-    lottery_interface public lottery_contract;
+    Lottery public lottery_contract;
 
     bytes32 internal keyHash;
     uint256 internal fee;
     mapping (uint => uint) public randomNumber;
     mapping (bytes32 => uint) public requestIds;
     uint256 public most_recent_random;
+
+    uint256 public counter = 0;
+    address public owner;
+
+    modifier onlyOnce() {
+        require(counter == 0, "Can only be called once");
+        _;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function.");
+        _;
+    }
     
     /**
      * Constructor inherits VRFConsumerBase
@@ -30,6 +43,14 @@ contract RandomNumberConsumer is VRFConsumerBase {
     {
         keyHash = 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4;
         fee = 0.0005 * 10 ** 18; // 0.0005 LINK
+
+        owner = msg.sender;
+    }
+    
+
+    function set_lottery_contract(address lottery_address) public onlyOnce onlyOwner{
+        lottery_contract = Lottery(lottery_address);
+        counter = counter + 1;
     }
 
     /** 

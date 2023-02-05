@@ -7,7 +7,9 @@ async function main() {
     console.log("Deploying contracts with the account:", owner.address);
 
     const lottery = await ethers.getContractFactory("Lottery");
-    const lottery_deployed = await lottery.deploy();
+
+    // Deploy using the address of the random number generator
+    const lottery_deployed = await lottery.deploy("0x95A5976ae8899e352364975F083182bFD0a8c63b");
 
     console.log("Lottery address:", lottery_deployed.address);
 

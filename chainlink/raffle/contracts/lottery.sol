@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import {randomness_interface} from "./interfaces/randomness_interface.sol";
+import "./randomness.sol";
 
 contract Lottery  {
+    
     enum LOTTERY_STATE { OPEN, CLOSED, CALCULATING_WINNER }
     address public owner;
 
-    randomness_interface public randomness_contract;
+    RandomNumberConsumer public randomness_contract;
 
     struct lottery {
         LOTTERY_STATE lottery_state;
@@ -25,8 +26,9 @@ contract Lottery  {
     }
 
     
-    constructor()
-    {
+    constructor(address randomness_address) {
+        owner = msg.sender;
+        randomness_contract = RandomNumberConsumer(randomness_address);
         lotteryId = 0;
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
     }
@@ -34,17 +36,21 @@ contract Lottery  {
     
     function start_new_lottery() public onlyOwner{
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
+
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.OPEN;
     }
 
     function enter() public payable {
         require(msg.value >= lotteries[lotteryId].minimum, "Not enough FTM sent");
+
         assert(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN);
         lotteries[lotteryId].players.push(payable(msg.sender));
     }     
   
     function end_lottery() public onlyOwner{
+
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN, "The lottery hasn't even started!");
+
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
         lotteryId = lotteryId + 1;
         pickWinner();
@@ -52,15 +58,19 @@ contract Lottery  {
 
 
     function pickWinner() private {
+
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
-        randomness_contract.getRandom(lotteryId);
+        
         //this kicks off the request and returns through fulfill_random
+        randomness_contract.getRandom(lotteryId);
     }
     
     function fulfill_random(uint256 randomness) external {
+
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         require(randomness > 0, "random-not-found");
-        // assert(msg.sender == governance.randomness());
+        require(msg.sender == address(randomness_contract), "Call not coming from randomness contract");
+
         uint256 index = randomness % lotteries[lotteryId].players.length;
         lotteries[lotteryId].players[index].transfer(address(this).balance);
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
