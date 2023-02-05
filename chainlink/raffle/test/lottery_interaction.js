@@ -13,19 +13,36 @@ describe("Lottery", function () {
         lottery = await ethers.getContractFactory("Lottery");
         random_number_generator = await ethers.getContractFactory("RandomNumberConsumer");
 
-        [owner] = await ethers.getSigners();
-        alice = new ethers.Wallet(process.env.PRIVATE_KEY_ALICE, ethers.provider);
-        bob = new ethers.Wallet(process.env.PRIVATE_KEY_BOB, ethers.provider);
+        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/fantom_testnet");
+
+        owner = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+        alice = new ethers.Wallet(process.env.PRIVATE_KEY_ALICE, provider);
+        bob = new ethers.Wallet(process.env.PRIVATE_KEY_BOB, provider);
 
 
-        lottery_deployed = await lottery.attach("0xD91E8f3E17B7a52a701D2537E3201B574eff977f")
-        random_number_generator_deployed = await random_number_generator.attach("0xa5c37Ee9A1a119f5Aa1b786163DA5226B98288E6");
+        lottery_deployed = await lottery.attach("0x5D0a640BDDd4a44e89bc5a322d54f61C8BB293b9")
+        random_number_generator_deployed = await random_number_generator.attach("0xE98B06f42cB0D4cAE600b647b31b16800E838642");
 
     });
 
-    it("Test a simple raffle", async function () {
+    it("Test lottery", async function () {
+
+        //await lottery_deployed.start_new_lottery();
 
 
+        // Print balances of every participants
+        console.log("Owner balance:", (await ethers.provider.getBalance(owner.address)).toString());
+        console.log("Alice balance:", (await ethers.provider.getBalance(alice.address)).toString());
+        console.log("Bob balance:", (await ethers.provider.getBalance(bob.address)).toString());
+
+        
+        // Alice and Bob join the lottery
+        await lottery_deployed.connect(alice).enter({value: ethers.utils.parseEther("0.1")});
+        await lottery_deployed.connect(bob).enter({value: ethers.utils.parseEther("0.1")});
+
+
+        // Owner ends the lottery
+        await lottery_deployed.end_lottery({gasLimit: 1000000});
         
 
     });

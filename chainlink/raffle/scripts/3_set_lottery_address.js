@@ -6,12 +6,12 @@ async function main() {
 
     const [owner] = await ethers.getSigners();
 
-    console.log("Setting the addresse with the account:", owner.address);
+    console.log("Setting the address with the account:", owner.address);
 
     const randomness = await ethers.getContractFactory("RandomNumberConsumer");
-    const randomness_deployed = await randomness.attach("0x95A5976ae8899e352364975F083182bFD0a8c63b");
+    const randomness_deployed = await randomness.attach("0x29Fd00FA40c90aec39AC604D875907874f237baA");
 
-    await randomness_deployed.set_lottery_contract("0x15b2e953aE27aacDe70D9bc6BBb2A26467D6EAFD");
+    await randomness_deployed.set_lottery_contract("0xb35A5c834c8C4e4f17d51Da207E4684FAd6DA2f6");
     
 
 }

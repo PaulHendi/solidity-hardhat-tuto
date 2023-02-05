@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "./randomness.sol";
 
 contract Lottery  {
-    
+
     enum LOTTERY_STATE { OPEN, CLOSED, CALCULATING_WINNER }
     address public owner;
 
@@ -36,7 +36,7 @@ contract Lottery  {
     
     function start_new_lottery() public onlyOwner{
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CLOSED, "can't start a new lottery yet");
-
+        //lotteries[lotteryId].minimum = 0.1 ether;
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.OPEN;
     }
 
@@ -52,28 +52,29 @@ contract Lottery  {
         require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.OPEN, "The lottery hasn't even started!");
 
         lotteries[lotteryId].lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
-        lotteryId = lotteryId + 1;
+        lotteryId = lotteryId + 1;  
         pickWinner();
     }
 
 
     function pickWinner() private {
 
-        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
+        require(lotteries[lotteryId-1].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         
         //this kicks off the request and returns through fulfill_random
-        randomness_contract.getRandom(lotteryId);
+        randomness_contract.getRandom(lotteryId-1);
+        
     }
     
     function fulfill_random(uint256 randomness) external {
 
-        require(lotteries[lotteryId].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
+        require(lotteries[lotteryId-1].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         require(randomness > 0, "random-not-found");
         require(msg.sender == address(randomness_contract), "Call not coming from randomness contract");
 
-        uint256 index = randomness % lotteries[lotteryId].players.length;
-        lotteries[lotteryId].players[index].transfer(address(this).balance);
-        lotteries[lotteryId].lottery_state = LOTTERY_STATE.CLOSED;
+        uint256 index = randomness % lotteries[lotteryId-1].players.length;
+        lotteries[lotteryId-1].players[index].transfer(address(this).balance);
+        lotteries[lotteryId-1].lottery_state = LOTTERY_STATE.CLOSED;
     }
 
     function get_players() public view returns (address payable[] memory) {
