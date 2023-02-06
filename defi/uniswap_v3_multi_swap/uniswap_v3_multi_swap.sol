@@ -7,7 +7,7 @@ pragma solidity ^0.8.17;
 import "./IERC20.sol";
 import "./ISwapRouter.sol";
 
-contract UniswapV3MultiHopSwap {
+contract UniswapV3MultiSwap {
     ISwapRouter private constant router =
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
@@ -18,7 +18,7 @@ contract UniswapV3MultiHopSwap {
     IERC20 private constant weth = IERC20(WETH);
     IERC20 private constant dai = IERC20(DAI);
 
-    function swapExactInputMultiHop(uint amountIn, uint amountOutMin) external {
+    function swapExactInputMulti(uint amountIn, uint amountOutMin) external {
         weth.transferFrom(msg.sender, address(this), amountIn);
         weth.approve(address(router), amountIn);
 
@@ -42,7 +42,7 @@ contract UniswapV3MultiHopSwap {
         router.exactInput(params);
     }
 
-    function swapExactOutputMultiHop(
+    function swapExactOutputMulti(
         uint amountOut,
         uint amountInMax
     ) external {

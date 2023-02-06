@@ -7,7 +7,7 @@ pragma solidity ^0.8.17;
 import "./IERC20.sol";
 import "./ISwapRouter.sol";
 
-contract UniswapV3SingleHopSwap {
+contract UniswapV3SingleSwap {
     ISwapRouter private constant router =
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
 
@@ -17,7 +17,7 @@ contract UniswapV3SingleHopSwap {
     IERC20 private constant weth = IERC20(WETH);
     IERC20 private constant dai = IERC20(DAI);
 
-    function swapExactInputSingleHop(
+    function swapExactInputSingle(
         uint amountIn,
         uint amountOutMin
     ) external {
@@ -39,7 +39,7 @@ contract UniswapV3SingleHopSwap {
         router.exactInputSingle(params);
     }
 
-    function swapExactOutputSingleHop(
+    function swapExactOutputSingle(
         uint amountOut,
         uint amountInMax
     ) external {
