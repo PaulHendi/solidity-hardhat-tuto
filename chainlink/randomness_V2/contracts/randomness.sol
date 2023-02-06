@@ -8,14 +8,9 @@ contract randomness is VRFV2WrapperConsumerBase {
     struct RequestStatus {
         uint256 paid; // amount paid in link
         bool fulfilled; // whether the request has been successfully fulfilled
-        uint256[] randomWords;
+        uint256 randomWords;
     }
-    mapping(uint256 => RequestStatus)
-        public s_requests; /* requestId --> requestStatus */
-
-    // past requests Id.
-    uint256[] public requestIds;
-    uint256 public lastRequestId;
+    RequestStatus public request; /* requestId --> requestStatus */
 
     uint32 callbackGasLimit = 1000000;
 
@@ -32,7 +27,6 @@ contract randomness is VRFV2WrapperConsumerBase {
     // address WRAPPER - hardcoded for Fantom testnet
     address wrapperAddress = 0x38336BDaE79747a1d2c4e6C67BBF382244287ca6;
 
-
     address owner;
 
     modifier onlyOwner() {
@@ -48,22 +42,27 @@ contract randomness is VRFV2WrapperConsumerBase {
 
     function requestRandomWords() external onlyOwner returns (uint256 requestId){
         requestId = requestRandomness(callbackGasLimit, requestConfirmations, numWords);
-        s_requests[requestId] = RequestStatus({
-                                    paid: VRF_V2_WRAPPER.calculateRequestPrice(callbackGasLimit),
-                                    randomWords: new uint256[](0),
-                                    fulfilled: false});
-        requestIds.push(requestId);
-        lastRequestId = requestId;
+        request = RequestStatus({
+                                paid: VRF_V2_WRAPPER.calculateRequestPrice(callbackGasLimit),
+                                randomWords: 0,
+                                fulfilled: false});
+
+        
         return requestId;
     }
+
 
     function fulfillRandomWords(
         uint256 _requestId,
         uint256[] memory _randomWords
     ) internal override {
-        require(s_requests[_requestId].paid > 0, "request not found");
-        s_requests[_requestId].fulfilled = true;
-        s_requests[_requestId].randomWords = _randomWords;
+        require(request.paid > 0, "request not found");
+        request.fulfilled = true;
+        request.randomWords = _randomWords[0];
+    }
+
+    function getRandomNumber() external view returns (uint256) {
+        return (request.randomWords%10);
     }
 
 

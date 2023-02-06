@@ -8,6 +8,8 @@ async function main() {
     await randomness.deployed();
     
     console.log("Randomness deployed to:", randomness.address);
+
+    // Don't forget to send some LINK :)
 }
 
 main().then(() => process.exit(0)).catch(error => {
