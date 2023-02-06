@@ -20,14 +20,14 @@ describe("Lottery", function () {
         bob = new ethers.Wallet(process.env.PRIVATE_KEY_BOB, provider);
 
 
-        lottery_deployed = await lottery.attach("0x9CD277E189a647eB1ADD9A0EdfA7Bc0b82C51Dd6")
-        random_number_generator_deployed = await random_number_generator.attach("0x434941bF02c3463cBb35De5fc5b9D269b55A6152");
+        lottery_deployed = await lottery.attach("0x36925BA255BEE771b8AE0d341A035813b4707Fb9")
+        random_number_generator_deployed = await random_number_generator.attach("0x1FF97d2DAB7A52603D15e720b07eDf1b07e07BD6");
 
     });
 
     it("Test lottery", async function () {
 
-        await(await lottery_deployed.start_new_lottery()).wait(2); // wait for 2 blocks to be mined
+        await(await lottery_deployed.start_new_lottery(ethers.utils.parseEther("0.1"))).wait(2); // wait for 2 blocks to be mined
 
 
         // Print balances of every participants
@@ -43,9 +43,14 @@ describe("Lottery", function () {
         // Owner joins the lottery as well
         await(await lottery_deployed.enter({value: ethers.utils.parseEther("0.1")})).wait(3); // wait for 3 blocks to be mined
 
-        // Owner ends the lottery
-        await lottery_deployed.end_lottery({gasLimit: 2500000});  // Max gas limit : 2,500,000 (from the docs)
-        
+       // Print balances of every participants
+       console.log("Owner balance:", (await ethers.provider.getBalance(owner.address)).toString());
+       console.log("Alice balance:", (await ethers.provider.getBalance(alice.address)).toString());
+       console.log("Bob balance:", (await ethers.provider.getBalance(bob.address)).toString());
+
+        // Owner ends the lottery ( Max gas limit : 2,500,000 (from the docs) )
+        await lottery_deployed.end_lottery({gasLimit: 2500000});
+
 
     });
 

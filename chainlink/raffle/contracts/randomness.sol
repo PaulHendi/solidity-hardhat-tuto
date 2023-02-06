@@ -17,10 +17,10 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
     // Works for now
     uint32 callbackGasLimit = 1000000;
 
-    // The default is 3, but you can set this higher.
-    uint16 requestConfirmations = 3;
+    // 5 confirmations
+    uint16 requestConfirmations = 5;
 
-    // Cannot exceed VRFV2Wrapper.getConfig().maxNumWords.
+    // Only one random number at a time
     uint32 numWords = 1;    
 
     // Address LINK - hardcoded for Fantom testnet
@@ -40,13 +40,11 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
     }
     
 
-     // Found the bug : The chainLink VRF corresponds to VRF V2
-     // But we are using V1 functions (as in the tutorial actually)
-     // So we need to update the code to inherit VRF V2 and use requestRandomWords instead of requestRandomness
-
     constructor() VRFV2WrapperConsumerBase(linkAddress, wrapperAddress) {
         owner = msg.sender;
     }
+
+    // TODO : Add setters for link and wrapper addresses ?
 
 
     function set_lottery_contract(address lottery_address) public onlyOnce onlyOwner{
@@ -59,7 +57,7 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
      */
      
     function getRandom() external {
-        // Need to check that only the lottery contract can call this function
+        require(msg.sender == address(lottery_contract), "Only the lottery contract can call this function");
         uint256 _requestId = requestRandomness(callbackGasLimit, requestConfirmations, numWords);
         random_numbers[_requestId] = 0;        
     }
@@ -70,6 +68,7 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
      * Callback function used by VRF Coordinator
      */
     function fulfillRandomWords(uint256 requestId, uint256[] memory _randomWords) internal override {
+        require(msg.sender == address(VRF_V2_WRAPPER), "Only VRF_V2_WRAPPER can fulfill");
         random_numbers[requestId] = _randomWords[0];
         lottery_contract.fulfill_random(_randomWords[0]);
     }
