@@ -1,21 +1,33 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "../node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "../node_modules/@chainlink/contracts/src/v0.8/VRFV2WrapperConsumerBase.sol";
 import "./lottery.sol";
 
-contract RandomNumberConsumer is VRFConsumerBase {
+contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
     
     Lottery public lottery_contract;
 
-    bytes32 internal keyHash;
-    uint256 internal fee;
-    mapping (uint => uint) public randomNumber;
-    mapping (bytes32 => uint) public requestIds;
-    uint256 public most_recent_random;
+
+    mapping(uint256 => uint256) public random_numbers; 
 
     uint256 public counter = 0;
     address public owner;
+
+    // Works for now
+    uint32 callbackGasLimit = 1000000;
+
+    // The default is 3, but you can set this higher.
+    uint16 requestConfirmations = 3;
+
+    // Cannot exceed VRFV2Wrapper.getConfig().maxNumWords.
+    uint32 numWords = 1;    
+
+    // Address LINK - hardcoded for Fantom testnet
+    address linkAddress = 0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F;
+
+    // address WRAPPER - hardcoded for Fantom testnet
+    address wrapperAddress = 0x38336BDaE79747a1d2c4e6C67BBF382244287ca6;    
 
     modifier onlyOnce() {
         require(counter == 0, "Can only be called once");
@@ -27,29 +39,12 @@ contract RandomNumberConsumer is VRFConsumerBase {
         _;
     }
     
-    /**
-     * Constructor inherits VRFConsumerBase
-     * 
-     * Network: Fantom testnet
-     * Chainlink VRF Coordinator address: 0xbd13f08b8352A3635218ab9418E340c60d6Eb418   
-     * LINK token address:                0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F
-     * Key Hash: 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4
-     */
 
      // Found the bug : The chainLink VRF corresponds to VRF V2
      // But we are using V1 functions (as in the tutorial actually)
      // So we need to update the code to inherit VRF V2 and use requestRandomWords instead of requestRandomness
 
-    constructor() 
-        VRFConsumerBase(
-            0xbd13f08b8352A3635218ab9418E340c60d6Eb418, // VRF Coordinator
-            0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F  // LINK Token
-        ) 
-    {
-        keyHash = 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4;
-        // 0.0005 LINK (500 millionth of a LINK, check fulfillmentFlatFeeLinkPPMTier1 in the VRF Coordinator contract)
-        fee = 0.0005 * 10 ** 18; 
-
+    constructor() VRFV2WrapperConsumerBase(linkAddress, wrapperAddress) {
         owner = msg.sender;
     }
 
@@ -63,22 +58,22 @@ contract RandomNumberConsumer is VRFConsumerBase {
      * Requests randomness from a user-provided seed
      */
      
-    function getRandom(uint256 lotteryId) public {
-        require(LINK.balanceOf(address(this)) > fee, "Not enough LINK - fill contract with faucet");
-        bytes32 _requestId = requestRandomness(keyHash, fee);
-        requestIds[_requestId] = lotteryId;
+    function getRandom() external {
+        // Need to check that only the lottery contract can call this function
+        uint256 _requestId = requestRandomness(callbackGasLimit, requestConfirmations, numWords);
+        random_numbers[_requestId] = 0;        
     }
+
 
 
     /**
      * Callback function used by VRF Coordinator
      */
-    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        most_recent_random = randomness;
-        uint lotteryId = requestIds[requestId];
-        randomNumber[lotteryId] = randomness;
-        lottery_contract.fulfill_random(randomness);
+    function fulfillRandomWords(uint256 requestId, uint256[] memory _randomWords) internal override {
+        random_numbers[requestId] = _randomWords[0];
+        lottery_contract.fulfill_random(_randomWords[0]);
     }
+
 
 }
 

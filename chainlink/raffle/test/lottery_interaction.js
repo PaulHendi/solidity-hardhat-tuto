@@ -20,14 +20,14 @@ describe("Lottery", function () {
         bob = new ethers.Wallet(process.env.PRIVATE_KEY_BOB, provider);
 
 
-        lottery_deployed = await lottery.attach("0x5D0a640BDDd4a44e89bc5a322d54f61C8BB293b9")
-        random_number_generator_deployed = await random_number_generator.attach("0xE98B06f42cB0D4cAE600b647b31b16800E838642");
+        lottery_deployed = await lottery.attach("0x9CD277E189a647eB1ADD9A0EdfA7Bc0b82C51Dd6")
+        random_number_generator_deployed = await random_number_generator.attach("0x434941bF02c3463cBb35De5fc5b9D269b55A6152");
 
     });
 
     it("Test lottery", async function () {
 
-        //await lottery_deployed.start_new_lottery();
+        await(await lottery_deployed.start_new_lottery()).wait(2); // wait for 2 blocks to be mined
 
 
         // Print balances of every participants
@@ -40,6 +40,8 @@ describe("Lottery", function () {
         await lottery_deployed.connect(alice).enter({value: ethers.utils.parseEther("0.1")});
         await lottery_deployed.connect(bob).enter({value: ethers.utils.parseEther("0.1")});
 
+        // Owner joins the lottery as well
+        await(await lottery_deployed.enter({value: ethers.utils.parseEther("0.1")})).wait(3); // wait for 3 blocks to be mined
 
         // Owner ends the lottery
         await lottery_deployed.end_lottery({gasLimit: 2500000});  // Max gas limit : 2,500,000 (from the docs)

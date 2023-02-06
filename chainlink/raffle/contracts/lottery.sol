@@ -62,7 +62,7 @@ contract Lottery  {
         require(lotteries[lotteryId-1].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
         
         //this kicks off the request and returns through fulfill_random
-        randomness_contract.getRandom(lotteryId-1);
+        randomness_contract.getRandom();
         
     }
     
