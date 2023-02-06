@@ -73,6 +73,7 @@ contract Lottery  {
 
     function fulfill_random(uint256 randomness) external {
 
+        require(msg.sender == address(randomness_contract), "Only the RandomNumberConsumer contract can call this function");
         uint256 curr_lottery_id = lotteryId - 1;
 
         require(lotteries[curr_lottery_id].lottery_state == LOTTERY_STATE.CALCULATING_WINNER, "You aren't at that stage yet!");
