@@ -13,14 +13,14 @@ contract UniswapV2SingleSwap {
     address private constant UNISWAP_V2_ROUTER = 0xa6AD18C2aC47803E193F75c3677b14BF19B94883;
 
     // WFTM and Link addresses on Fantom testnet
-    address private constant WFTM = 0x812666209b90344Ec8e528375298ab9045c2Bd08;
+    address private constant WFTM = 0xf1277d1Ed8AD466beddF92ef448A132661956621;
     address private constant LINK = 0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F;
 
     IUniswapV2Router01 private constant router = IUniswapV2Router01(UNISWAP_V2_ROUTER);
     IERC20 private constant wftm = IERC20(WFTM);
     IERC20 private constant link = IERC20(LINK);
 
-    function swapSingleExactAmountIn(uint amountIn, uint amountOutMin)
+    function swapSingleExactAmountIn(uint amountIn)
         external
     {
         wftm.transferFrom(msg.sender, address(this), amountIn);
@@ -31,9 +31,9 @@ contract UniswapV2SingleSwap {
         path[1] = LINK;
         
         router.swapExactTokensForTokens(amountIn, 
-                                 amountOutMin,
+                                 0,
                                  path,
-                                 msg.sender,
+                                 address(this),
                                  block.timestamp);
     }
 
