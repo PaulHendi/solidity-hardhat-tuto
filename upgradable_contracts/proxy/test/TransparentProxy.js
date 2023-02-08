@@ -30,15 +30,15 @@ describe("TransparentProxy", function () {
         data = await iface.encodeFunctionData("count", []);
 
         // TODO : need to find a way to get the return value of the function (currently only tx info is returned)
-        res = await owner.sendTransaction({to: counterV1_deployed.address, data : data});
+        res = await owner.sendTransaction({to: buggyProxy_deployed.address, data : data});
 
         data = await iface.encodeFunctionData("inc", []);
-        res = await owner.sendTransaction({to: counterV1_deployed.address, data : data});
+        res = await owner.sendTransaction({to: buggyProxy_deployed.address, data : data});
 
         // 2) Now let's test the proxy pattern with the counterV1 contract
         await proxy_deployed.upgradeTo(counterV1_deployed.address);
         data = await iface.encodeFunctionData("inc", []);
-        res = await owner.sendTransaction({to: counterV1_deployed.address, data : data});
+        res = await owner.sendTransaction({to: proxy_deployed.address, data : data});
 
         res = await counterV1_deployed.count();
         console.log("CounterV1 count: ", res.toString());
