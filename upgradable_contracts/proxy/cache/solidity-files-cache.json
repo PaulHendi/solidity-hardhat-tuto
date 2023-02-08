@@ -1,0 +1,220 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/BuggyProxy.sol": {
+      "lastModificationDate": 1675872288721,
+      "contentHash": "28ec9782b132ad3e49f13a9b3ea3980b",
+      "sourceName": "contracts/BuggyProxy.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "BuggyProxy"
+      ]
+    },
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/CounterV1.sol": {
+      "lastModificationDate": 1675872055968,
+      "contentHash": "54d9df8a8595ca08aeb46e058086b302",
+      "sourceName": "contracts/CounterV1.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "CounterV1"
+      ]
+    },
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/CounterV2.sol": {
+      "lastModificationDate": 1675872074278,
+      "contentHash": "4d1585e47e4da837f198697e0036878f",
+      "sourceName": "contracts/CounterV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "CounterV2"
+      ]
+    },
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/Proxy.sol": {
+      "lastModificationDate": 1675872240256,
+      "contentHash": "717be998892ffb850659e60142d3a57d",
+      "sourceName": "contracts/Proxy.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "Proxy",
+        "ProxyAdmin"
+      ]
+    },
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/StorageSlot.sol": {
+      "lastModificationDate": 1675872256840,
+      "contentHash": "4979cba9025525b98020b5fa1b2501eb",
+      "sourceName": "contracts/StorageSlot.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "StorageSlot"
+      ]
+    },
+    "/Users/pilu/Desktop/solidity_hardhat_tuto/upgradable_contracts/proxy/contracts/TestStorageSlot.sol": {
+      "lastModificationDate": 1675872226881,
+      "contentHash": "70c1acecead6174df819bbe79962ee9d",
+      "sourceName": "contracts/TestStorageSlot.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TestSlot"
+      ]
+    }
+  }
+}
