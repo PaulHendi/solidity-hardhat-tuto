@@ -24,9 +24,9 @@ contract NftLowerGas is ERC721, Ownable {
     string public uriPrefix = "";
     string public uriSuffix = ".json";
 
-    uint256 public cost = 0.01 ether;
-    uint256 public maxSupply = 10000;
-    uint256 public maxMintAmountPerTx = 5;
+    uint256 public cost = 0.01 ether; // Deploying on Fantom Opera, so 0.01 FTM 
+    uint256 public maxSupply = 4;
+    uint256 public maxMintAmountPerTx = 1;
 
     bool public paused = true;
 
