@@ -5,7 +5,7 @@ async function main() {
         const [owner] = await ethers.getSigners();
         
         const coin_flip = await ethers.getContractFactory("CoinFlip");
-        const coin_flip_deployed = await coin_flip.attach("0xBa962CdB7f12d60ECB198E8710DE7A401493E485");
+        const coin_flip_deployed = await coin_flip.attach("0x625a00FD8B9a36d4d308FF23FC767FECF32EB5e3");
 
         await coin_flip_deployed.play(0, {value: ethers.utils.parseEther("0.1"), gasLimit: 2500000});
 

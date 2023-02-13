@@ -78,7 +78,7 @@ contract CoinFlip {
         require(games[requestId].player != address(0), "No game found with this id");
         require(address(this).balance >= games[requestId].amount, "Contract balance too low");
 
-        games[requestId].ended == true;
+        games[requestId].ended = true;
         uint256 side = random_number % 2;
 
 
@@ -89,6 +89,11 @@ contract CoinFlip {
         }
 
         emit GameResult(games[requestId].player, side, games[requestId].bet);
+    }
+
+    // Tmp function to withdraw funds
+    function withdraw() public onlyOwner {
+        payable(msg.sender).transfer(address(this).balance);
     }
 
 }
