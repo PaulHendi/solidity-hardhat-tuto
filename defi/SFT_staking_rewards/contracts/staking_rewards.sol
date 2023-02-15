@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "./IERC1155.sol";
 
-contract StakingRewards {
+import "./IERC1155.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+
+
+contract StakingRewards  {
     IERC1155 public immutable stakingToken;
-    IERC20 public immutable rewardsToken;
 
     address public owner;
 
-    // Duration of rewards to be paid out (in seconds)
-    uint public duration;
-    // Timestamp of when the rewards finish
-    uint public finishAt;
+
     // Minimum of last updated time and reward finish time
     uint public updatedAt;
     // Reward to be paid out per second
@@ -26,12 +25,23 @@ contract StakingRewards {
 
     // Total staked
     uint public totalSupply;
-    // User address => staked amount
-    mapping(address => uint) public balanceOf;
+
+    struct Userdata {
+        uint256 balanceOf;
+        uint256[] stakedAt;
+        uint256[] redeemedAt;
+        uint256 rewards;
+    }
+
+    address[] public users;
+    mapping(address => Userdata) public userdata;
+
+    uint256 public NUMERATOR = 10000; 
+    uint256 public DENOMINATOR = 1000000; 
 
     constructor(address _stakingNFT) {
         owner = msg.sender;
-        stakingToken = IERC1155(_stakingToken);
+        stakingToken = IERC1155(_stakingNFT);
     }
 
     modifier onlyOwner() {
@@ -39,89 +49,68 @@ contract StakingRewards {
         _;
     }
 
-    modifier updateReward(address _account) {
-        rewardPerTokenStored = rewardPerToken();
-        updatedAt = lastTimeRewardApplicable();
 
-        if (_account != address(0)) {
-            rewards[_account] = earned(_account);
-            userRewardPerTokenPaid[_account] = rewardPerTokenStored;
+    function _getDurationForUser(address account) internal view returns (uint) {
+        uint256 nft_staked = userdata[account].balanceOf;
+        require(nft_staked > 0, "no balance");
+
+        uint256 userTotalTimeStaked = 0;
+        for (uint i=0; i<nft_staked; i++) {
+            userTotalTimeStaked += (block.timestamp - 
+                                    userdata[account].stakedAt[i] +
+                                    userdata[account].redeemedAt[i]);
         }
-
-        _;
+        
+        return userTotalTimeStaked;
     }
 
-    function lastTimeRewardApplicable() public view returns (uint) {
-        return _min(finishAt, block.timestamp);
-    }
 
-    function rewardPerToken() public view returns (uint) {
-        if (totalSupply == 0) {
-            return rewardPerTokenStored;
+    function _getTotalDuration() internal view returns (uint) {
+        uint256 totalDuration = 0;
+        for (uint i=0; i<users.length; i++) {
+            totalDuration += _getDurationForUser(users[i]);
         }
-
-        return
-            rewardPerTokenStored +
-            (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) /
-            totalSupply;
+        return totalDuration;
     }
 
-    function stake(uint _amount) external updateReward(msg.sender) {
+    function _getRewardsShare(address account) internal view returns (uint) {
+        uint256 userDurationWeight = _getDurationForUser(account) / _getTotalDuration();
+        uint256 userAmountWeight = userdata[account].balanceOf / totalSupply;
+
+        return (userDurationWeight + userAmountWeight)/2;
+    }
+
+
+
+    function stake(uint _amount) external  {
         require(_amount > 0, "amount = 0");
-        stakingToken.transferFrom(msg.sender, address(this), _amount);
-        balanceOf[msg.sender] += _amount;
+        
+        stakingToken.safeTransferFrom(msg.sender, address(this), 0, _amount, "");
         totalSupply += _amount;
+
+        userdata[msg.sender].balanceOf += _amount;
+        
+        for (uint i=0; i<_amount; i++) {
+            userdata[msg.sender].stakedAt.push(block.timestamp);
+        }
     }
 
-    function withdraw(uint _amount) external updateReward(msg.sender) {
-        require(_amount > 0, "amount = 0");
-        balanceOf[msg.sender] -= _amount;
+    function withdraw(uint _amount) external  {
+        require(_amount > 0, "amount = 0"); 
+        require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
+
         totalSupply -= _amount;
-        stakingToken.transfer(msg.sender, _amount);
+        userdata[msg.sender].balanceOf -= _amount;
+        for (uint i=0; i<_amount; i++) {
+            userdata[msg.sender].redeemedAt.push(block.timestamp);
+        }        
+        stakingToken.safeTransferFrom(address(this), msg.sender, 0, _amount, "");
     }
 
-    function earned(address _account) public view returns (uint) {
-        return
-            ((balanceOf[_account] *
-                (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) +
-            rewards[_account];
+    function getRewards(address account) public view returns (uint256) {
+        return _getRewardsShare(account)*totalSupply;
     }
 
-    function getReward() external updateReward(msg.sender) {
-        uint reward = rewards[msg.sender];
-        if (reward > 0) {
-            rewards[msg.sender] = 0;
-            rewardsToken.transfer(msg.sender, reward);
-        }
-    }
 
-    function setRewardsDuration(uint _duration) external onlyOwner {
-        require(finishAt < block.timestamp, "reward duration not finished");
-        duration = _duration;
-    }
-
-    function notifyRewardAmount(
-        uint _amount
-    ) external onlyOwner updateReward(address(0)) {
-        if (block.timestamp >= finishAt) {
-            rewardRate = _amount / duration;
-        } else {
-            uint remainingRewards = (finishAt - block.timestamp) * rewardRate;
-            rewardRate = (_amount + remainingRewards) / duration;
-        }
-
-        require(rewardRate > 0, "reward rate = 0");
-        require(
-            rewardRate * duration <= rewardsToken.balanceOf(address(this)),
-            "reward amount > balance"
-        );
-
-        finishAt = block.timestamp + duration;
-        updatedAt = block.timestamp;
-    }
-
-    function _min(uint x, uint y) private pure returns (uint) {
-        return x <= y ? x : y;
-    }
 }
 
