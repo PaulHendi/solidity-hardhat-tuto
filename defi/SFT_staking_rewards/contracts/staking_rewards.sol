@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
-import "./IERC1155.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-
-
-contract StakingRewards  {
+contract StakingRewards is ERC1155Holder {
     IERC1155 public immutable stakingToken;
 
     address public owner;
@@ -90,7 +88,7 @@ contract StakingRewards  {
 
         userdata[msg.sender].balanceOf += _amount;
         
-        for (uint i=0; i<_amount; i++) {
+        for (uint i=0; i<=_amount; i++) {
             userdata[msg.sender].stakedAt.push(block.timestamp);
         }
     }
@@ -101,7 +99,7 @@ contract StakingRewards  {
 
         totalSupply -= _amount;
         userdata[msg.sender].balanceOf -= _amount;
-        for (uint i=0; i<_amount; i++) {
+        for (uint i=0; i<=_amount; i++) {
             userdata[msg.sender].redeemedAt.push(block.timestamp);
         }        
         stakingToken.safeTransferFrom(address(this), msg.sender, 0, _amount, "");
@@ -113,4 +111,3 @@ contract StakingRewards  {
 
 
 }
-
