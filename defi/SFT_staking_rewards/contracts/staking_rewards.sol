@@ -32,6 +32,7 @@ contract StakingRewards is ERC1155Holder {
     }
 
     address[] public users;
+    mapping(address => bool) public staking;
     mapping(address => Userdata) public userdata;
 
     uint256 public NUMERATOR = 10000; 
@@ -48,22 +49,25 @@ contract StakingRewards is ERC1155Holder {
     }
 
 
-    function _getDurationForUser(address account) internal view returns (uint) {
+    function _getDurationForUser(address account) public view returns (uint) {
         uint256 nft_staked = userdata[account].balanceOf;
-        require(nft_staked > 0, "no balance");
+
+        // Check if current user has retrieved his rewards
 
         uint256 userTotalTimeStaked = 0;
         for (uint i=0; i<nft_staked; i++) {
-            userTotalTimeStaked += (block.timestamp - 
-                                    userdata[account].stakedAt[i] +
-                                    userdata[account].redeemedAt[i]);
+            if(userdata[account].redeemedAt[i] == 0) {
+                userTotalTimeStaked += (block.timestamp - userdata[account].stakedAt[i]);
+            } else {
+                userTotalTimeStaked += (userdata[account].redeemedAt[i] - userdata[account].stakedAt[i]);
+            }
         }
         
         return userTotalTimeStaked;
     }
 
 
-    function _getTotalDuration() internal view returns (uint) {
+    function _getTotalDuration() public view returns (uint) {
         uint256 totalDuration = 0;
         for (uint i=0; i<users.length; i++) {
             totalDuration += _getDurationForUser(users[i]);
@@ -71,7 +75,8 @@ contract StakingRewards is ERC1155Holder {
         return totalDuration;
     }
 
-    function _getRewardsShare(address account) internal view returns (uint) {
+
+    function _getRewardsShare(address account) public view returns (uint) {
         uint256 userDurationWeight = _getDurationForUser(account) / _getTotalDuration();
         uint256 userAmountWeight = userdata[account].balanceOf / totalSupply;
 
@@ -87,9 +92,12 @@ contract StakingRewards is ERC1155Holder {
         totalSupply += _amount;
 
         userdata[msg.sender].balanceOf += _amount;
+        users.push(msg.sender);
+        staking[msg.sender] = true;
         
         for (uint i=0; i<=_amount; i++) {
             userdata[msg.sender].stakedAt.push(block.timestamp);
+            userdata[msg.sender].redeemedAt.push(0);
         }
     }
 
@@ -99,8 +107,11 @@ contract StakingRewards is ERC1155Holder {
 
         totalSupply -= _amount;
         userdata[msg.sender].balanceOf -= _amount;
+        if (userdata[msg.sender].balanceOf == 0) {
+            staking[msg.sender] = false;
+        }
         for (uint i=0; i<=_amount; i++) {
-            userdata[msg.sender].redeemedAt.push(block.timestamp);
+            userdata[msg.sender].redeemedAt[i] = block.timestamp;
         }        
         stakingToken.safeTransferFrom(address(this), msg.sender, 0, _amount, "");
     }

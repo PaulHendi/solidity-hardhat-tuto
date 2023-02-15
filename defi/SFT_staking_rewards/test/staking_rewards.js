@@ -1,65 +1,78 @@
 const {ethers} = require("hardhat");
-const {expect} = require("chai");
+
 
 describe("StakingRewards", function () {
 
-    let stakingToken, rewardToken, stakingRewards;
-    let stakingToken_deployed, rewardToken_deployed, stakingRewards_deployed;
+    let staking_contract, sft_contract; 
+    let staking_contract_deployed, sft_contract_deployed; 
 
     let owner, alice, bob;
 
     beforeEach(async function () {
-    
-        stakingToken = await ethers.getContractFactory("ERC20");
-        rewardToken = await ethers.getContractFactory("ERC20");
-        stakingRewards = await ethers.getContractFactory("StakingRewards");
-
-        stakingToken_deployed = await stakingToken.deploy("Staking Token", "STK");
-        rewardToken_deployed = await rewardToken.deploy("Reward Token", "RWD");
-        stakingRewards_deployed = await stakingRewards.deploy(stakingToken_deployed.address, rewardToken_deployed.address);
-
-        [owner, alice, bob] = await ethers.getSigners();
-
-        // Owner sends 200 STK to Alice and Bob
-        await stakingToken_deployed.transfer(alice.address, 200);
-        await stakingToken_deployed.transfer(bob.address, 200);
-
-        // Owner sends 100 RWD to StakingRewards contract
-        await rewardToken_deployed.transfer(stakingRewards_deployed.address, 100);
-
-    
-    });
 
 
-    it("should check balances of everyone before starting", async function () {
+        // Get the Stacking contract
+        staking_contract = await ethers.getContractFactory("StakingRewards");
+        staking_contract_deployed = await staking_contract.attach("0x4628b2863F1F11E5d7460E7037eC5932fE202b4e");
 
-        expect(await stakingToken_deployed.balanceOf(alice.address)).to.equal(200);
-        expect(await stakingToken_deployed.balanceOf(bob.address)).to.equal(200);
-        expect(await rewardToken_deployed.balanceOf(stakingRewards_deployed.address)).to.equal(100);
+        await staking_contract_deployed.deployed();
+
+        console.log("StakingRewards deployed to:", staking_contract_deployed.address)
+
+        // Approve the staking contract to spend the SFTs
+        sft_contract = await ethers.getContractFactory("SFT");
+        sft_contract_deployed = await sft_contract.attach("0x6643fBC0D66fc580de15a0A0678D4c1f41b0071b");
+
+        const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/fantom_testnet");
 
 
-    });
+        owner = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+        alice = new ethers.Wallet(process.env.PRIVATE_KEY_ALICE, provider);
+        bob = new ethers.Wallet(process.env.PRIVATE_KEY_BOB, provider);
+
+        // Owner approves
+        await(await sft_contract_deployed.setApprovalForAll(staking_contract_deployed.address, true)).wait(3);
+
+        // // Alice approves as well
+        // await(await sft_contract_deployed.connect(alice).setApprovalForAll(staking_contract_deployed.address, true)).wait(3);
+
+        // // Bob approves as well
+        // await(await sft_contract_deployed.connect(bob).setApprovalForAll(staking_contract_deployed.address, true)).wait(3);
 
 
-    it("should start staking", async function () {
+        // Owner mints 5 SFT
+        //await sft_contract_deployed.mint(5,{value:ethers.utils.parseEther("0.05")});
 
-        // Alice and Bob approve StakingRewards contract to spend their STK
-        await stakingToken_deployed.connect(alice).approve(stakingRewards_deployed.address, 200);
-        await stakingToken_deployed.connect(bob).approve(stakingRewards_deployed.address, 200);
+        // Alice mints 5 SFT
+       // await sft_contract_deployed.connect(alice).mint(5,{value:ethers.utils.parseEther("0.05")});
 
-        // Alice and Bob stake 100 STK each
-        await stakingRewards_deployed.connect(alice).stake(100);
-        await stakingRewards_deployed.connect(bob).stake(100);
-
-        // Check balances
-        expect(await stakingToken_deployed.balanceOf(alice.address)).to.equal(100);
-        expect(await stakingToken_deployed.balanceOf(bob.address)).to.equal(100);
-        expect(await stakingToken_deployed.balanceOf(stakingRewards_deployed.address)).to.equal(200);
-
-        // Get reward per token info
-        let rewardPerToken = await stakingRewards_deployed.rewardPerToken();
-        console.log("Reward per token: " + rewardPerToken.toString());
+        // Bob mints 5 SFT
+       // await sft_contract_deployed.connect(bob).mint(5,{value:ethers.utils.parseEther("0.05")});
 
     });
+
+
+    it("Should stake", async function () {
+
+
+        // Owner stakes 1 NFT
+        await(await staking_contract_deployed.stake(1)).wait(3);
+
+        // // Get the state of the contract
+        const user_data = await staking_contract_deployed.userdata(owner.address);
+
+        // console.log(user_data);
+
+        // Get duration
+        const duration = await staking_contract_deployed._getDurationForUser(owner.address);
+
+        console.log(duration);
+
+        // Get total duratioj
+        const total_duration = await staking_contract_deployed._getTotalDuration();
+
+        console.log(total_duration);
+    });
+
 
 });
