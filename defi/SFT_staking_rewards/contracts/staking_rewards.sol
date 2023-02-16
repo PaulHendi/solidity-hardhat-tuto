@@ -18,8 +18,7 @@ contract StakingRewards is ERC1155Holder {
     uint public rewardPerTokenStored;
     // User address => rewardPerTokenStored
     mapping(address => uint) public userRewardPerTokenPaid;
-    // User address => rewards to be claimed
-    mapping(address => uint) public rewards;
+
 
     // Total staked
     uint public totalSupply;
@@ -92,7 +91,11 @@ contract StakingRewards is ERC1155Holder {
         totalSupply += _amount;
 
         userdata[msg.sender].balanceOf += _amount;
-        users.push(msg.sender);
+        // Check if user already exists
+        int256 index_user = indexOf(msg.sender);
+        if ( index_user == -1) {
+            users.push(msg.sender);
+        }
         staking[msg.sender] = true;
         
         for (uint i=0; i<=_amount; i++) {
@@ -101,6 +104,25 @@ contract StakingRewards is ERC1155Holder {
         }
     }
 
+    function indexOf(address searchFor) private view returns (int256) {
+        for (uint256 i = 0; i < users.length; i++) {
+          if (users[i] == searchFor) {
+            return int(i);
+          }
+        }
+        return -1; // not found
+      }
+
+    function remove(address _user) public {
+        require(users.length > 0, "Can't remove from empty array");
+
+        int index = indexOf(_user);
+        require(index >= 0, "User not found");
+        users[uint(index)] = users[users.length - 1];
+        users.pop();
+    }
+    
+
     function withdraw(uint _amount) external  {
         require(_amount > 0, "amount = 0"); 
         require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
@@ -108,6 +130,7 @@ contract StakingRewards is ERC1155Holder {
         totalSupply -= _amount;
         userdata[msg.sender].balanceOf -= _amount;
         if (userdata[msg.sender].balanceOf == 0) {
+            remove(msg.sender);
             staking[msg.sender] = false;
         }
         for (uint i=0; i<=_amount; i++) {
@@ -117,8 +140,34 @@ contract StakingRewards is ERC1155Holder {
     }
 
     function getRewards(address account) public view returns (uint256) {
-        return _getRewardsShare(account)*totalSupply;
+        return _getRewardsShare(account)*address(this).balance;
     }
 
+
+    function claimRewards() external {
+        uint256 rewards = getRewards(msg.sender);
+        require(rewards > 0, "no rewards");
+        userdata[msg.sender].rewards += rewards;
+
+
+        if (!staking[msg.sender]) {
+            delete userdata[msg.sender];
+        }
+        else {
+            for (uint i=0; i<userdata[msg.sender].balanceOf; i++) {
+                userdata[msg.sender].stakedAt[i] = block.timestamp;
+                userdata[msg.sender].redeemedAt[i] = 0;
+            }
+        }
+        
+
+        payable(msg.sender).transfer(rewards);
+    }
+
+    function emergencyWithdraw() external onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+
+    
 
 }
