@@ -9,33 +9,21 @@ contract StakingRewards is ERC1155Holder {
 
     address public owner;
 
-
-    // Minimum of last updated time and reward finish time
-    uint public updatedAt;
-    // Reward to be paid out per second
-    uint public rewardRate;
-    // Sum of (reward rate * dt * 1e18 / total supply)
-    uint public rewardPerTokenStored;
     // User address => rewardPerTokenStored
-    mapping(address => uint) public userRewardPerTokenPaid;
-
+    mapping(address => uint) public userRewardPaid; // Variable to store rewards which users claimed
 
     // Total staked
-    uint public totalSupply;
+    uint public totalStaked; // Variable to store total amount of tokens staked by all users
 
     struct Userdata {
-        uint256 balanceOf;
-        uint256[] stakedAt;
-        uint256[] redeemedAt;
-        uint256 rewards;
+        uint256 balanceOf; // Balance of user
+        uint256[] stakedAt; // Allows the function to track the time when each token was staked and redeemed
+        uint256[] redeemedAt; 
     }
 
-    address[] public users;
-    mapping(address => bool) public staking;
-    mapping(address => Userdata) public userdata;
-
-    uint256 public NUMERATOR = 10000; 
-    uint256 public DENOMINATOR = 1000000; 
+    address[] public users; // Stores addresses of all users
+    mapping(address => bool) public staking; // Boolean flag which shows if user is staking tokens at the moment 
+    mapping(address => Userdata) public userdata; // Mapping which stores data for every user
 
     constructor(address _stakingNFT) {
         owner = msg.sender;
@@ -47,17 +35,24 @@ contract StakingRewards is ERC1155Holder {
         _;
     }
 
-
+    /**
+     * Calculates the duration of staked and redeemed tokens for 
+     * a specific user
+     * @param account - address of particular user
+     * @return userTotalTimeStaked - total duration of user's staking and redeem period
+     */
     function _getDurationForUser(address account) public view returns (uint) {
         uint256 nft_staked = userdata[account].balanceOf;
 
-        // Check if current user has retrieved his rewards
-
         uint256 userTotalTimeStaked = 0;
+        // Loops through all users tokens
         for (uint i=0; i<nft_staked; i++) {
+            // If token is still staked
             if(userdata[account].redeemedAt[i] == 0) {
+                // Calculates the time since token was staked
                 userTotalTimeStaked += (block.timestamp - userdata[account].stakedAt[i]);
             } else {
+                // Calculates the total duration token was staked
                 userTotalTimeStaked += (userdata[account].redeemedAt[i] - userdata[account].stakedAt[i]);
             }
         }
@@ -65,109 +60,172 @@ contract StakingRewards is ERC1155Holder {
         return userTotalTimeStaked;
     }
 
-
+    /**
+     * Calculates total duration from all users staking period
+     * @return totalDuration - total sum of individual users stake duration 
+     */
     function _getTotalDuration() public view returns (uint) {
         uint256 totalDuration = 0;
+        // Loops through all users
         for (uint i=0; i<users.length; i++) {
             totalDuration += _getDurationForUser(users[i]);
         }
         return totalDuration;
     }
 
-
+    /**
+     * Calculates rewards share for particular user based on duration as well
+     * as amount of tokens staked  
+     * @param account - Address of particular user
+     * @return share - total rewards share
+     */
     function _getRewardsShare(address account) public view returns (uint) {
         uint256 userDurationWeight = _getDurationForUser(account) / _getTotalDuration();
-        uint256 userAmountWeight = userdata[account].balanceOf / totalSupply;
+        uint256 userAmountWeight = userdata[account].balanceOf / totalStaked;
 
         return (userDurationWeight + userAmountWeight)/2;
     }
 
-
-
+    /**
+     * Main external function for user to stake tokens
+     * @notice - user must approve the contract to transfer tokens before calling this function
+     * @param _amount - amount of tokens to stake
+     */
     function stake(uint _amount) external  {
         require(_amount > 0, "amount = 0");
         
+        // Transfers token from user to the contract
         stakingToken.safeTransferFrom(msg.sender, address(this), 0, _amount, "");
-        totalSupply += _amount;
 
+        // Updates total staked amount
+        totalStaked += _amount;
+
+        // Updates user's balance
         userdata[msg.sender].balanceOf += _amount;
-        // Check if user already exists
-        int256 index_user = indexOf(msg.sender);
+
+        // Checks if user already exists in the mapping
+        int256 index_user = indexOf(msg.sender); 
         if ( index_user == -1) {
+            // If user doesn't exist, adds user to the mapping
             users.push(msg.sender);
+
+            // Updates user's staking status
+            staking[msg.sender] = true;            
         }
-        staking[msg.sender] = true;
-        
+
+        // Updates user's staking time
         for (uint i=0; i<=_amount; i++) {
             userdata[msg.sender].stakedAt.push(block.timestamp);
             userdata[msg.sender].redeemedAt.push(0);
         }
     }
 
-    function indexOf(address searchFor) private view returns (int256) {
-        for (uint256 i = 0; i < users.length; i++) {
-          if (users[i] == searchFor) {
-            return int(i);
-          }
-        }
-        return -1; // not found
-      }
-
-    function remove(address _user) public {
-        require(users.length > 0, "Can't remove from empty array");
-
-        int index = indexOf(_user);
-        require(index >= 0, "User not found");
-        users[uint(index)] = users[users.length - 1];
-        users.pop();
-    }
-    
-
+    /**
+     * This function allows a user to withdraw a certain amount of tokens staked in the contract.
+     * @param _amount - amount of tokens to withdraw
+     */
     function withdraw(uint _amount) external  {
         require(_amount > 0, "amount = 0"); 
         require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
 
-        totalSupply -= _amount;
+        // Updates total staked amount
+        totalStaked -= _amount;
+
+        // Updates user's balance
         userdata[msg.sender].balanceOf -= _amount;
+
+        // Checks if user still has tokens staked
         if (userdata[msg.sender].balanceOf == 0) {
+            // If user doesn't have any tokens staked, removes user from the mapping
             remove(msg.sender);
             staking[msg.sender] = false;
         }
+
+        // Updates user's staking time
         for (uint i=0; i<=_amount; i++) {
             userdata[msg.sender].redeemedAt[i] = block.timestamp;
         }        
+
+        // Transfers token from contract to user
         stakingToken.safeTransferFrom(address(this), msg.sender, 0, _amount, "");
     }
 
+    /**
+     * Allows user to claim rewards
+     * @param account - address of particular user
+     * @notice - The rewards depends on current contract's balance, sometimes it worth waiting for a while
+     * to claim rewards :) 
+     * @return rewards - total rewards for user
+     */
     function getRewards(address account) public view returns (uint256) {
         return _getRewardsShare(account)*address(this).balance;
     }
 
-
+    /**
+     * Allows user to claim rewards
+     */
     function claimRewards() external {
+
+        // Checks if user has any rewards to claim
         uint256 rewards = getRewards(msg.sender);
         require(rewards > 0, "no rewards");
-        userdata[msg.sender].rewards += rewards;
 
+        // Updates user's rewards
+        userRewardPaid[msg.sender] = rewards;
 
         if (!staking[msg.sender]) {
+            // If user doesn't have any tokens staked, removes user from the mapping
             delete userdata[msg.sender];
         }
         else {
+            // If user still has tokens staked, updates user's staking time
             for (uint i=0; i<userdata[msg.sender].balanceOf; i++) {
                 userdata[msg.sender].stakedAt[i] = block.timestamp;
                 userdata[msg.sender].redeemedAt[i] = 0;
             }
         }
         
-
+        // Transfers rewards to user
         payable(msg.sender).transfer(rewards);
     }
 
+    /**
+     * Allows owner to withdraw all funds from the contract
+     * @notice - This function is only for testing (not wasting faucet funds)
+     */
     function emergencyWithdraw() external onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
 
+    /**
+     * Utility function to check if user exists in the users array and returns index
+     * @param _user - address of particular user
+     * @return index - index of user in the users array (or -1 if user doesn't exist)
+     */
+    function indexOf(address _user) private view returns (int256) {
+        for (uint256 i = 0; i < users.length; i++) {
+          if (users[i] == _user) {
+            return int(i);
+          }
+        }
+        return -1; // not found
+      }
+
+    /**
+     * Utility function to remove user from the users array
+     * @param _user - address of particular user
+    */
+    function remove(address _user) public {
+        require(users.length > 0, "Can't remove from empty array");
+
+        // Finds index of user in the users array
+        int index = indexOf(_user);
+        require(index >= 0, "User not found");
+
+        // Removes user from the users array
+        users[uint(index)] = users[users.length - 1];
+        users.pop();
+    }
     
 
 }
