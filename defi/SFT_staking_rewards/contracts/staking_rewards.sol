@@ -25,6 +25,8 @@ contract StakingRewards is ERC1155Holder {
     mapping(address => bool) public staking; // Boolean flag which shows if user is staking tokens at the moment 
     mapping(address => Userdata) public userdata; // Mapping which stores data for every user
 
+    uint256 public SCALE = 1_000_000;
+
     constructor(address _stakingNFT) {
         owner = msg.sender;
         stakingToken = IERC1155(_stakingNFT);
@@ -80,8 +82,8 @@ contract StakingRewards is ERC1155Holder {
      * @return share - total rewards share
      */
     function _getRewardsShare(address account) public view returns (uint) {
-        uint256 userDurationWeight = _getDurationForUser(account) / _getTotalDuration();
-        uint256 userAmountWeight = userdata[account].balanceOf / totalStaked;
+        uint256 userDurationWeight = _getDurationForUser(account) * SCALE / _getTotalDuration();
+        uint256 userAmountWeight = userdata[account].balanceOf * SCALE / totalStaked;
 
         return (userDurationWeight + userAmountWeight)/2;
     }
@@ -124,7 +126,7 @@ contract StakingRewards is ERC1155Holder {
      * This function allows a user to withdraw a certain amount of tokens staked in the contract.
      * @param _amount - amount of tokens to withdraw
      */
-    function withdraw(uint _amount) external  {
+    function unstake(uint _amount) external  {  
         require(_amount > 0, "amount = 0"); 
         require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
 
@@ -137,7 +139,7 @@ contract StakingRewards is ERC1155Holder {
         // Checks if user still has tokens staked
         if (userdata[msg.sender].balanceOf == 0) {
             // If user doesn't have any tokens staked, removes user from the mapping
-            remove(msg.sender);
+            //remove(msg.sender); // Don't remove user if he didn't claim rewards yet
             staking[msg.sender] = false;
         }
 
@@ -158,7 +160,7 @@ contract StakingRewards is ERC1155Holder {
      * @return rewards - total rewards for user
      */
     function getRewards(address account) public view returns (uint256) {
-        return _getRewardsShare(account)*address(this).balance;
+        return _getRewardsShare(account)*address(this).balance/SCALE;
     }
 
     /**
@@ -176,6 +178,7 @@ contract StakingRewards is ERC1155Holder {
         if (!staking[msg.sender]) {
             // If user doesn't have any tokens staked, removes user from the mapping
             delete userdata[msg.sender];
+            remove(msg.sender);
         }
         else {
             // If user still has tokens staked, updates user's staking time
@@ -225,6 +228,15 @@ contract StakingRewards is ERC1155Holder {
         // Removes user from the users array
         users[uint(index)] = users[users.length - 1];
         users.pop();
+    }
+
+
+    fallback() external payable {
+        // Fallback function
+    }
+
+    receive() external payable {
+        // Receive function
     }
     
 

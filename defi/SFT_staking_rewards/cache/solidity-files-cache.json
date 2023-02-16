@@ -39,8 +39,8 @@
       ]
     },
     "/Users/pilu/Desktop/solidity_hardhat_tuto/defi/SFT_staking_rewards/contracts/staking_rewards.sol": {
-      "lastModificationDate": 1676560520757,
-      "contentHash": "099460f5930043824212e7ace48ba2a6",
+      "lastModificationDate": 1676580370023,
+      "contentHash": "a716193e85049a31ad758b15f5f7ec2c",
       "sourceName": "contracts/staking_rewards.sol",
       "solcConfig": {
         "version": "0.8.17",

@@ -11,5 +11,8 @@ module.exports = {
       url: "https://rpc.ankr.com/fantom_testnet",
       accounts: [process.env.PRIVATE_KEY]
     }
-  }
+  },
+  mocha: {
+    timeout: 100000000
+  },
 };
