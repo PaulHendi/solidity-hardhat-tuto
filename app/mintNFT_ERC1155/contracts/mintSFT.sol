@@ -7,7 +7,7 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract SFT is ERC1155, Ownable {
-    using Counters for Counters.Counter;
+    using Counters for Counters.Counter; // Todo : check if this is needed
 
     Counters.Counter private supply;
 
@@ -54,6 +54,11 @@ contract SFT is ERC1155, Ownable {
         require(!paused, "The contract is paused!"); 
         // Requires that the payment is enough for all tokens being minted 
         require(msg.value >= cost * _mintAmount, "Insufficient funds!"); 
+
+        // Update the supply
+        for (uint256 i = 0; i < _mintAmount; i++) {
+            supply.increment();
+        }
 
         // Call to mint tokens 
         _mint(msg.sender, ID, _mintAmount, ""); 
