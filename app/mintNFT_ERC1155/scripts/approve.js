@@ -7,7 +7,7 @@ async function main() {
     const nft = await NFT.attach("0x6643fBC0D66fc580de15a0A0678D4c1f41b0071b");
 
 
-    await nft.setApprovalForAll("0x732Bc68358d66e719c21AA6EC92ED4D7fDe337B9", true);
+    await nft.setApprovalForAll("0x081801d6Ff087688e6C156AAc9e3FBDc7740441C", true);
 
 }
 

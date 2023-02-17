@@ -5,10 +5,7 @@ import "../node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
-/**
-  Caveats:
-    invoke setPaused(true) if the NFTs are available to mint
- */
+
 contract SFT is ERC1155, Ownable {
     using Counters for Counters.Counter;
 
@@ -20,67 +17,80 @@ contract SFT is ERC1155, Ownable {
 
     bool public paused = true;
 
-    uint256 public constant ID = 0;
+    uint256 public constant ID = 1;
 
     constructor(string memory uri) ERC1155(uri) {}
 
-    modifier mintCompliance(uint256 _mintAmount) {
-        require(
-            _mintAmount > 0 && _mintAmount <= maxMintAmountPerTx,
-            "Invalid mint amount!"
-        );
-        require(
-            supply.current() + _mintAmount <= maxSupply,
-            "Max supply exceeded!"
-        );
-        _;
+    /**
+    * @return the name of the token.
+    */
+    function name() public pure returns (string memory) { 
+        return "Obake"; 
+    } 
+
+    /**
+    * @return the symbol of the token.
+    */
+    function symbol() public pure returns (string memory) { 
+        // Function to return the token's symbol 
+        return "OBK"; 
+    } 
+
+    /**
+    * Modifier to check if the mint amount is valid and the total supply does not exceed the maximum supply.
+    */
+    modifier mintCompliance(uint256 _mintAmount) { 
+        require(_mintAmount > 0 && _mintAmount <= maxMintAmountPerTx, "Invalid mint amount!"); 
+        require(supply.current() + _mintAmount <= maxSupply, "Max supply exceeded!"); 
+        _; 
     }
 
-    function totalSupply() public view returns (uint256) {
-        return supply.current();
-    }
+    /**
+    * Function to mint tokens.
+    * @param _mintAmount - amount of tokens to mint
+    */
+    function mint(uint256 _mintAmount) public payable mintCompliance(_mintAmount) { 
+        // Requires the contract to not be paused 
+        require(!paused, "The contract is paused!"); 
+        // Requires that the payment is enough for all tokens being minted 
+        require(msg.value >= cost * _mintAmount, "Insufficient funds!"); 
 
-    function mint(uint256 _mintAmount)
-        public
-        payable
-        mintCompliance(_mintAmount)
-    {
-        require(!paused, "The contract is paused!");
-        require(msg.value >= cost * _mintAmount, "Insufficient funds!");
-
-        _mint(msg.sender, ID, _mintAmount, "");
-    }
-
-    function mintForAddress(uint256 _mintAmount, address _receiver)
-        public
-        mintCompliance(_mintAmount)
-        onlyOwner
-    {
-        _mint(_receiver, ID, _mintAmount, "");
+        // Call to mint tokens 
+        _mint(msg.sender, ID, _mintAmount, ""); 
     }
 
 
-    function setCost(uint256 _cost) public onlyOwner {
-        cost = _cost;
+    /**
+    * Function to set the cost per NFT (in FTM)
+    * @param _cost - amount of tokens to burn
+    */
+    function setCost(uint256 _cost) public onlyOwner { 
+        cost = _cost; 
     }
 
-    function setMaxMintAmountPerTx(uint256 _maxMintAmountPerTx)
-        public
-        onlyOwner
-    {
+    /**
+    * Function to set the maximum of NFT that can be minted per transaction.
+    * @param _maxMintAmountPerTx - maximum supply of tokens
+    */
+    function setMaxMintAmountPerTx(uint256 _maxMintAmountPerTx) public onlyOwner {
         maxMintAmountPerTx = _maxMintAmountPerTx;
     }
 
-
+    /**
+    * Function the contract to paused/not paused.
+    * @param _state - maximum supply of tokens
+    */
     function setPaused(bool _state) public onlyOwner {
         paused = _state;
     }
 
-    function withdraw() public onlyOwner {
-        // This will transfer the remaining contract balance to the owner.
-        (bool os, ) = payable(owner()).call{value: address(this).balance}("");
-        require(os);
+    /**
+    * Function to withdraw the FTM from the contract (callable by the owner).
+    */
+    function withdraw() public onlyOwner { 
+        (bool os,) = payable(owner()).call{ value: address(this).balance }(""); 
+        // Requires the transfer succeeds 
+        require(os, "Failed to transfer funds to owner"); 
     }
-
 
 }

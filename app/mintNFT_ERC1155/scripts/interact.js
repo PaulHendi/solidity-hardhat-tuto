@@ -4,7 +4,7 @@ async function main() {
 
 
     const NFT = await ethers.getContractFactory("SFT");
-    const nft = await NFT.attach("0x6643fBC0D66fc580de15a0A0678D4c1f41b0071b");
+    const nft = await NFT.attach("0x80e399B6A8f30340E95952CfD3bb177bC858540B");//0x6643fBC0D66fc580de15a0A0678D4c1f41b0071b");
 
     await(await nft.setPaused(false)).wait(2);
 
