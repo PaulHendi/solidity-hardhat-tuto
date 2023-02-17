@@ -9,6 +9,11 @@ contract StakingRewards is ERC1155Holder {
 
     address public owner;
 
+    event FTMReceived(address indexed sender, uint256 amount);
+    event NFTStaked(address indexed sender, uint256 amount);
+    event NFTUnstaked(address indexed sender, uint256 amount);
+    event RewardsClaimed(address indexed sender, uint256 amount);
+
     // User address => rewardPerTokenStored
     mapping(address => uint) public userRewardPaid; // Variable to store rewards which users claimed
 
@@ -19,10 +24,10 @@ contract StakingRewards is ERC1155Holder {
         uint256 balanceOf; // Balance of user
         uint256[] stakedAt; // Allows the function to track the time when each token was staked and redeemed
         uint256[] redeemedAt; 
+        uint256 previousBalance; // Allows the function to track if user was staking before
     }
 
     address[] public users; // Stores addresses of all users
-    mapping(address => bool) public staking; // Boolean flag which shows if user is staking tokens at the moment 
     mapping(address => Userdata) public userdata; // Mapping which stores data for every user
 
     uint256 public SCALE = 1_000_000;
@@ -82,10 +87,10 @@ contract StakingRewards is ERC1155Holder {
      * @return share - total rewards share
      */
     function _getRewardsShare(address account) public view returns (uint) {
-        uint256 userDurationWeight = _getDurationForUser(account) * SCALE / _getTotalDuration();
-        uint256 userAmountWeight = userdata[account].balanceOf * SCALE / totalStaked;
+        uint256 _userDurationWeight = _getDurationForUser(account) * SCALE / _getTotalDuration();
+        uint256 _userAmountWeight = userdata[account].balanceOf * SCALE / totalStaked;
 
-        return (userDurationWeight + userAmountWeight)/2;
+        return (_userDurationWeight + _userAmountWeight)/2;
     }
 
     /**
@@ -109,10 +114,7 @@ contract StakingRewards is ERC1155Holder {
         int256 index_user = indexOf(msg.sender); 
         if ( index_user == -1) {
             // If user doesn't exist, adds user to the mapping
-            users.push(msg.sender);
-
-            // Updates user's staking status
-            staking[msg.sender] = true;            
+            users.push(msg.sender);       
         }
 
         // Updates user's staking time
@@ -120,6 +122,8 @@ contract StakingRewards is ERC1155Holder {
             userdata[msg.sender].stakedAt.push(block.timestamp);
             userdata[msg.sender].redeemedAt.push(0);
         }
+
+        emit NFTStaked(msg.sender, _amount);
     }
 
     /**
@@ -130,26 +134,31 @@ contract StakingRewards is ERC1155Holder {
         require(_amount > 0, "amount = 0"); 
         require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
 
+        // User is not staking anymore
+        if ( (userdata[msg.sender].balanceOf - _amount) == 0) {
+            claimRewards();
+
+            // If user doesn't have any tokens staked, removes user from the mapping
+            delete userdata[msg.sender];
+            remove(msg.sender);
+        }      
+        else {
+            // Updates user's staking time
+            for (uint i=0; i<=_amount; i++) {
+                userdata[msg.sender].redeemedAt[i] = block.timestamp;
+            }    
+            // Updates user's balance
+            userdata[msg.sender].balanceOf -= _amount;
+        }
+
         // Updates total staked amount
         totalStaked -= _amount;
 
-        // Updates user's balance
-        userdata[msg.sender].balanceOf -= _amount;
-
-        // Checks if user still has tokens staked
-        if (userdata[msg.sender].balanceOf == 0) {
-            // If user doesn't have any tokens staked, removes user from the mapping
-            //remove(msg.sender); // Don't remove user if he didn't claim rewards yet
-            staking[msg.sender] = false;
-        }
-
-        // Updates user's staking time
-        for (uint i=0; i<=_amount; i++) {
-            userdata[msg.sender].redeemedAt[i] = block.timestamp;
-        }        
 
         // Transfers token from contract to user
         stakingToken.safeTransferFrom(address(this), msg.sender, 0, _amount, "");
+
+        emit NFTUnstaked(msg.sender, _amount);
     }
 
     /**
@@ -166,30 +175,26 @@ contract StakingRewards is ERC1155Holder {
     /**
      * Allows user to claim rewards
      */
-    function claimRewards() external {
+    function claimRewards() public {
 
         // Checks if user has any rewards to claim
         uint256 rewards = getRewards(msg.sender);
         require(rewards > 0, "no rewards");
 
         // Updates user's rewards
-        userRewardPaid[msg.sender] = rewards;
-
-        if (!staking[msg.sender]) {
-            // If user doesn't have any tokens staked, removes user from the mapping
-            delete userdata[msg.sender];
-            remove(msg.sender);
+        userRewardPaid[msg.sender] += rewards;
+        
+        // If user still has tokens staked, updates user's staking time
+        for (uint i=0; i<userdata[msg.sender].balanceOf; i++) {
+            userdata[msg.sender].stakedAt[i] = block.timestamp;
+            userdata[msg.sender].redeemedAt[i] = 0;
         }
-        else {
-            // If user still has tokens staked, updates user's staking time
-            for (uint i=0; i<userdata[msg.sender].balanceOf; i++) {
-                userdata[msg.sender].stakedAt[i] = block.timestamp;
-                userdata[msg.sender].redeemedAt[i] = 0;
-            }
-        }
+        
         
         // Transfers rewards to user
         payable(msg.sender).transfer(rewards);
+
+        emit RewardsClaimed(msg.sender, rewards);
     }
 
     /**
@@ -233,10 +238,12 @@ contract StakingRewards is ERC1155Holder {
 
     fallback() external payable {
         // Fallback function
+        emit FTMReceived(msg.sender, msg.value);
     }
 
     receive() external payable {
         // Receive function
+        emit FTMReceived(msg.sender, msg.value);
     }
     
 
