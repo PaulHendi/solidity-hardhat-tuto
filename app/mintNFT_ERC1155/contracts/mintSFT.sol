@@ -6,10 +6,10 @@ import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract SFT is ERC1155, Ownable {
+contract Obake is ERC1155, Ownable {
     using Counters for Counters.Counter; // Todo : check if this is needed
 
-    Counters.Counter private supply;
+    Counters.Counter public supply;
 
     uint256 public cost = 0.01 ether; // Deploying on Fantom Opera, so 0.01 FTM 
     uint256 public maxSupply = 2500;

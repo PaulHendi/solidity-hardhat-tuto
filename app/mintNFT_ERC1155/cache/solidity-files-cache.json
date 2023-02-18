@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/pilu/Desktop/solidity_hardhat_tuto/app/mintNFT_ERC1155/contracts/mintSFT.sol": {
-      "lastModificationDate": 1676582747745,
-      "contentHash": "cba3bad5a250f979c6b63c2bf9c6cd0b",
+      "lastModificationDate": 1676759888529,
+      "contentHash": "95fde2d917136fe895fc8c5f4622467a",
       "sourceName": "contracts/mintSFT.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -37,7 +37,7 @@
         "^0.8.17"
       ],
       "artifacts": [
-        "SFT"
+        "Obake"
       ]
     },
     "/Users/pilu/Desktop/solidity_hardhat_tuto/app/mintNFT_ERC1155/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
