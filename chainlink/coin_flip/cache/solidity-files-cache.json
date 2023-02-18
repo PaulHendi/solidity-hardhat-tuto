@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/pilu/Desktop/solidity_hardhat_tuto/chainlink/coin_flip/contracts/coin_flip.sol": {
-      "lastModificationDate": 1676319162192,
-      "contentHash": "01e85b567ffb9084d2c9bc46b9f9cdfa",
+      "lastModificationDate": 1676757252936,
+      "contentHash": "704cf523ffc7b4c678e67f5afd4f34a9",
       "sourceName": "contracts/coin_flip.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -39,8 +39,8 @@
       ]
     },
     "/Users/pilu/Desktop/solidity_hardhat_tuto/chainlink/coin_flip/contracts/randomness.sol": {
-      "lastModificationDate": 1675717207144,
-      "contentHash": "1416b4434103d4b30af1cd9aab105dc8",
+      "lastModificationDate": 1676752824586,
+      "contentHash": "d542d05416389e4a666293b6474c02fc",
       "sourceName": "contracts/randomness.sol",
       "solcConfig": {
         "version": "0.8.17",

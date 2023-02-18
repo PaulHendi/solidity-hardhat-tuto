@@ -16,9 +16,9 @@ async function main() {
     await randomness_deployed.deployTransaction.wait(5)
 
 
-    // 2) Deploy CoinFlip using the address of the random number generator
+    // 2) Deploy CoinFlip using the address of the random number generator and the address of the owner (FundManager for the tests)
     const coin_flip = await ethers.getContractFactory("CoinFlip");
-    const coin_flip_deployed = await coin_flip.deploy(randomness_deployed.address);
+    const coin_flip_deployed = await coin_flip.deploy(randomness_deployed.address, owner.address);
 
     console.log("CoinFlip address:", coin_flip_deployed.address);  
 
@@ -30,6 +30,7 @@ async function main() {
     await randomness_deployed.set_flip_contract(coin_flip_deployed.address);
 
     // Don't forget to fund the randomness contract with LINK tokens :)
+    // Don't forget to fund the coin_flip contract with FTM :)
 
 }
 
