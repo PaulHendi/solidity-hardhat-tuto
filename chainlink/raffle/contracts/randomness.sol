@@ -56,10 +56,12 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
      * Requests randomness from a user-provided seed
      */
      
-    function getRandom() external {
+    function getRandom() external returns (uint256){
         require(msg.sender == address(lottery_contract), "Only the lottery contract can call this function");
         uint256 _requestId = requestRandomness(callbackGasLimit, requestConfirmations, numWords);
-        random_numbers[_requestId] = 0;        
+        random_numbers[_requestId] = 0;  
+        
+        return _requestId;
     }
 
 
@@ -70,7 +72,7 @@ contract RandomNumberConsumer is VRFV2WrapperConsumerBase {
     function fulfillRandomWords(uint256 requestId, uint256[] memory _randomWords) internal override {
         require(msg.sender == address(VRF_V2_WRAPPER), "Only VRF_V2_WRAPPER can fulfill");
         random_numbers[requestId] = _randomWords[0];
-        lottery_contract.fulfill_random(_randomWords[0]);
+        lottery_contract.fulfill_random(requestId, _randomWords[0]);
     }
 
 
