@@ -102,9 +102,6 @@ describe("StakingRewards", function () {
         total_staked = await staking_contract_deployed.totalStaked();
         console.log("Total staked : " + total_staked);
 
-        // Get isStaking 
-        isStaking = await staking_contract_deployed.staking(account);
-        console.log("Is staking : " + isStaking);
     }
 
 

@@ -5,9 +5,12 @@ import "../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holde
 import "../node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
 contract StakingRewards is ERC1155Holder {
-    IERC1155 public immutable stakingToken;
 
-    address public owner;
+    // Todo : For this kind of staking contract, we need to lock the tokens for a certain period of time
+    // If not a user just claimed rewards as much as possible and he would own more than other staking for a long time
+    // Meanwhile, we will focus on a different staking contract
+
+    IERC1155 public immutable stakingToken;
 
     event FTMReceived(address indexed sender, uint256 amount);
     event NFTStaked(address indexed sender, uint256 amount);
@@ -24,13 +27,15 @@ contract StakingRewards is ERC1155Holder {
         uint256 balanceOf; // Balance of user
         uint256[] stakedAt; // Allows the function to track the time when each token was staked and redeemed
         uint256[] redeemedAt; 
-        uint256 previousBalance; // Allows the function to track if user was staking before
     }
 
     address[] public users; // Stores addresses of all users
     mapping(address => Userdata) public userdata; // Mapping which stores data for every user
 
-    uint256 public SCALE = 1_000_000;
+    uint256 public SCALE = 1_000_000; // Variable to scale rewards share
+
+    address public owner;
+
 
     constructor(address _stakingNFT) {
         owner = msg.sender;
@@ -87,10 +92,10 @@ contract StakingRewards is ERC1155Holder {
      * @return share - total rewards share
      */
     function _getRewardsShare(address account) public view returns (uint) {
-        uint256 _userDurationWeight = _getDurationForUser(account) * SCALE / _getTotalDuration();
-        uint256 _userAmountWeight = userdata[account].balanceOf * SCALE / totalStaked;
+        uint256 _userShare = _getDurationForUser(account) * SCALE / _getTotalDuration();
 
-        return (_userDurationWeight + _userAmountWeight)/2;
+        // Note : removed unnecessary weights on amount owned
+        return _userShare;
     }
 
     /**
@@ -131,6 +136,9 @@ contract StakingRewards is ERC1155Holder {
      * @param _amount - amount of tokens to withdraw
      */
     function unstake(uint _amount) external  {  
+
+        // Todo : Test redeem 
+
         require(_amount > 0, "amount = 0"); 
         require(userdata[msg.sender].balanceOf >= _amount, "not enough balance");
 
@@ -246,5 +254,17 @@ contract StakingRewards is ERC1155Holder {
         emit FTMReceived(msg.sender, msg.value);
     }
     
+    // Tmp fcts to get stakedAt and redeemedAt for an address
+    function getStakedAt(address _user) public view returns (uint256[] memory) {
+        return userdata[_user].stakedAt;
+    }
+
+    function getRedeemedAt(address _user) public view returns (uint256[] memory) {
+        return userdata[_user].redeemedAt;
+    }
+
+    function getBalanceOf(address _user) public view returns (uint256) {
+        return userdata[_user].balanceOf;
+    }
 
 }
