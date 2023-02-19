@@ -33,13 +33,17 @@ contract StakingRewardsV2 is ERC1155Holder {
         uint256 reward_rate;
     }
 
-    StakingInfo public staking_info;
+    StakingInfo public staking_info = StakingInfo(0,0); // Not sure if this is necessary
 
     // User address => rewards to be claimed
     mapping(address => uint) public rewards;
 
     // User address => staked amount
     mapping(address => uint) public balanceOf; 
+
+    // Every time a user stakes/unstakes or claims rewards, the reward per token is updated
+    // This mapping keeps track of the reward per token already taken into account for each user
+    mapping(address => uint256) public userRewardPerTokenAccounted;    
 
     // updatedAt keeps track of the last time the reward per token was updated
     uint256 public updatedAt;
@@ -48,9 +52,6 @@ contract StakingRewardsV2 is ERC1155Holder {
     uint256 public accumulatedRewardPerNFT;
     
 
-    // Every time a user stakes/unstakes or claims rewards, the reward per token is updated
-    // This mapping keeps track of the reward per token already taken into account for each user
-    mapping(address => uint256) public userRewardPerTokenAccounted;
     
 
     constructor(address _stakingNFT) {
@@ -216,8 +217,9 @@ contract StakingRewardsV2 is ERC1155Holder {
             staking_info.reward_rate = address(this).balance / staking_duration;
             staking_info.start = block.timestamp;
 
-            accumulatedRewardPerNFT = 0;
+            //accumulatedRewardPerNFT = 0;
         }
+
         
         
     }
