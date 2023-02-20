@@ -37,6 +37,21 @@ contract UniswapV2SingleSwap {
                                  block.timestamp);
     }
 
+    function swapSingleExactFTMIn()
+        external
+        payable
+    {
+        
+        address[] memory path = new address[](2);
+        path[0] = WFTM;
+        path[1] = LINK;
+        
+        router.swapExactETHForTokens{value: msg.value}(0, 
+                                                       path, 
+                                                       address(this), 
+                                                       block.timestamp);
+    }
+
     function swapSingleExactAmountOut(
         uint amountOutDesired,
         uint amountInMax
