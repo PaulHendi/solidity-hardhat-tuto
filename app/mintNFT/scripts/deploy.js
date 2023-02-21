@@ -8,7 +8,7 @@ async function main() {
     console.log("Account balance:", (await deployer.getBalance()).toString());
     
     const NFT = await ethers.getContractFactory("NftLowerGas");
-    const nft = await NFT.deploy("Beagles","BEAG","https://gateway.pinata.cloud/ipfs/QmQRpDw3QVP3AzwMMFowgkEWhmvMvdaaKZNrxs41VziL5B/");
+    const nft = await NFT.deploy("BabyMonkeys","KEYS","https://gateway.pinata.cloud/ipfs/QmXGc3y8zfW3PzpPQyAKZFXzY96Q7QqNuisQRjzgoMw5tE/");
 
     console.log("NFT address:", nft.address);
 
